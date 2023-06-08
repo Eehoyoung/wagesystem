@@ -1,0 +1,22 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/wage?serverTime=Asia/Seoul
+    username: root
+    password: cv93523827!!
+  mvc:
+    hiddenmethod:
+      filter:
+        enabled: true
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+  thymeleaf:
+    prefix: classpath:/templates/
+    suffix: .html
+    cache: true
+    mode: HTML
+    encoding: UTF-8

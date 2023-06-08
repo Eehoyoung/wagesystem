@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>근태관리 메인 페이지</title>
+    <style> .button-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 2rem;
+    }
+
+    button {
+        width: 150px;
+        height: 50px;
+        font-size: 1.2rem;
+        cursor: pointer;
+    } </style>
+    <script src="/js/main/main.js"></script>
+</head>
+<body>
+<header th:replace="~{main/header :: main_headerFragment}"></header> <!--header end-->
+<main class="main">
+    <div class="salary"><h2>누적 급여: ￦0</h2></div>
+    <div class="employee-id"><label for="employee-id-input">직원 아이디:</label> <input id="employee-id-input" type="text">
+    </div>
+    <div class="button-container">
+        <button onclick="startWork()" type="button">출근</button>
+        <button onclick="endWork()" type="button">퇴근</button>
+    </div>
+</main>
+<footer th:replace="~{main/footer :: main_footerFragment}"></footer>
+</body>
+</html>
