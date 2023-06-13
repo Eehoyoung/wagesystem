@@ -1,16 +1,19 @@
-package com.example.absenteeismerp.dto;
+package com.example.wagesystem.dto;
 
-import com.example.absenteeismerp.model.type.Position;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.math.BigDecimal;
+
 @Getter
 @Setter
-public class myPageDto {
+public class MyPageDto {
 
     private String name;
 
     private Position position;
 
-    private double pay;
+    private BigDecimal pay;
+
+    private int hourWage;
 }

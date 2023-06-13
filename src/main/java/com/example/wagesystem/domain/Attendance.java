@@ -1,50 +1,46 @@
-package com.example.absenteeismerp.model;
+package com.example.wagesystem.domain;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-
 @Entity
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
-@AllArgsConstructor
 @Table(name = "attendance")
 public class Attendance {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "attendance_id")
     private Long attendanceId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "employee_id", nullable = false)
+    @JoinColumn(name = "employee_id")
     private Employee employee;
 
-    @Column(nullable = false)
+    @Column
     private LocalDateTime startTime;
 
-    @Column(nullable = false)
+    @Column
     private LocalDateTime endTime;
 
-    @Column(nullable = false)
-    private BigDecimal dailyWage;
-
-    @Column(nullable = false)
-    private BigDecimal weeklyAllowance;
-
-    public Attendance(Employee employee, LocalDateTime startTime, LocalDateTime endTime, BigDecimal dailyWage, BigDecimal weeklyAllowance) {
-        this.employee = employee;
-        this.startTime = startTime;
-        this.endTime = endTime;
-        this.dailyWage = dailyWage;
-        this.weeklyAllowance = weeklyAllowance;
-    }
 
     public void setEmployee(Employee employee){
         this.employee = employee;
         employee.getPayList().add(this);
+    }
+
+    @Builder
+    public Attendance(Long attendanceId, Employee employee, LocalDateTime startTime, LocalDateTime endTime) {
+        this.attendanceId = attendanceId;
+        this.employee = employee;
+        this.startTime = startTime;
+        this.endTime = endTime;
     }
 }

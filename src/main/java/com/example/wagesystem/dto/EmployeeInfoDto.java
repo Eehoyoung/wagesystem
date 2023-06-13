@@ -1,14 +1,7 @@
-package com.example.absenteeismerp.dto;
+package com.example.wagesystem.dto;
 
-import com.example.absenteeismerp.model.Employee;
-import com.example.absenteeismerp.model.type.Position;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
-
-import java.time.LocalDate;
-import java.time.LocalDateTime;
+import com.example.wagesystem.domain.Employee;
+import lombok.*;
 
 @Getter
 @Setter
@@ -28,9 +21,24 @@ public class EmployeeInfoDto {
 
     private String phoneNumber;
 
-    private LocalDateTime hireDate;
+    private String EmPhoneNumber;
 
     private String store;
+
+    private String birthday;
+
+    @Builder
+    public EmployeeInfoDto(Position position, String store, Long employeeId, String loginId, String loginPw, String name, String phoneNumber, String birthday, String EmPhoneNumber) {
+        this.employeeId = employeeId;
+        this.loginId = loginId;
+        this.loginPw = loginPw;
+        this.name = name;
+        this.phoneNumber = phoneNumber;
+        this.birthday = birthday;
+        this.EmPhoneNumber = EmPhoneNumber;
+        this.store = store;
+        this.position = position;
+    }
 
     public Employee toEntity() {
         return Employee.builder()
@@ -39,6 +47,10 @@ public class EmployeeInfoDto {
                 .loginPw(loginPw)
                 .name(name)
                 .phoneNumber(phoneNumber)
+                .birthday(birthday)
+                .EmPhoneNumber(EmPhoneNumber)
+                .store(store)
+                .position(position)
                 .build();
     }
 }

@@ -27,6 +27,7 @@ public class EmployeeRepositoryImpl implements EmployeeRepositoryCustom {
     public Page<EmployeeDto> searchAll(Pageable pageable) {
         QueryResults<EmployeeDto> results = queryFactory
                 .select(new QEmployeeDto(
+
                         QEmployee.employee.employeeId,
                         QEmployee.employee.loginId,
                         QEmployee.employee.name,
@@ -35,7 +36,8 @@ public class EmployeeRepositoryImpl implements EmployeeRepositoryCustom {
                         QEmployee.employee.store,
                         QEmployee.employee.phoneNumber,
                         QEmployee.employee.hireDate,
-                        QEmployee.employee.hourwage
+                        QEmployee.employee.hourwage,
+                        QEmployee.employee.EmPhoneNumber
                 ))
 //                EmployeeId, loginId, name, position, resignationDate, store, phoneNumber, hireDate, hourWage
                 .from(QEmployee.employee)
@@ -65,7 +67,8 @@ public class EmployeeRepositoryImpl implements EmployeeRepositoryCustom {
                             QEmployee.employee.store,
                             QEmployee.employee.phoneNumber,
                             QEmployee.employee.hireDate,
-                            QEmployee.employee.hourwage
+                            QEmployee.employee.hourwage,
+                            QEmployee.employee.EmPhoneNumber
                     ))
                     .from(QEmployee.employee)
                     .where(loginIdEq(search.getSearchKeyWord()))
@@ -84,7 +87,8 @@ public class EmployeeRepositoryImpl implements EmployeeRepositoryCustom {
                             QEmployee.employee.store,
                             QEmployee.employee.phoneNumber,
                             QEmployee.employee.hireDate,
-                            QEmployee.employee.hourwage
+                            QEmployee.employee.hourwage,
+                            QEmployee.employee.EmPhoneNumber
                     ))
                     .from(QEmployee.employee)
                     .where(nameEq(search.getSearchKeyWord()))

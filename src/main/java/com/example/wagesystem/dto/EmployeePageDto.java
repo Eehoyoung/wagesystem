@@ -1,4 +1,4 @@
-package com.example.absenteeismerp.dto;
+package com.example.wagesystem.dto;
 
 import lombok.Getter;
 import lombok.Setter;

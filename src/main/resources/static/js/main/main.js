@@ -1,17 +1,39 @@
-async function startWork() {
-    const employeeIdInput = document.getElementById("employee-id-input");
-    const employeeId = employeeIdInput.value;
-    const response = await fetch("http://localhost:8080/start-work?employeeId=" + employeeId, {method: "POST"});
-    const data = await response.json();
-    console.log(data);
-    alert("출근처리 되었습니다. 오늘도 화이팅!!")
-}
+$(document).ready(function() {
+    alert("00")
+    $("#checkInBtn").click(function() {
+        const employeeId = $("#employeeId").val();
+        const checkInTime = new Date().toISOString();
 
-async function endWork() {
-    const employeeIdInput = document.getElementById("employee-id-input");
-    const employeeId = employeeIdInput.value;
-    const response = await fetch("/end-work?employeeId=" + employeeId, {method: "POST"});
-    const data = await response.json();
-    console.log(data);
-    alert("퇴근처리 되었습니다. 수고하셨습니다!!")
-}
+        // 출근 시간 기록 및 서버에 전송하는 기능 구현
+        $.ajax({
+            url: "/start-work",
+            type: "POST",
+            data: { employeeId, checkInTime },
+            success: function(response) {
+                console.log(response); // 출근 처리 성공 메시지 출력
+            },
+            error: function(err) {
+                console.error(err); // 에러 메시지 출력
+            }
+        });
+    });
+
+    $("#checkOutBtn").click(function() {
+        const employeeId = $("#employeeId").val();
+        const checkOutTime = new Date().toISOString();
+
+        // 퇴근 시간 기록 및 서버에 전송하는 기능 구현
+        $.ajax({
+            url: "/end-work",
+            type: "POST",
+            data: { employeeId, checkOutTime },
+            success: function(response) {
+                console.log(response); // 퇴근 처리 성공 메시지 출력
+            },
+            error: function(err) {
+                console.error(err); // 에러 메시지 출력
+            }
+        });
+    });
+});
+

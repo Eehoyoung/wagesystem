@@ -3,34 +3,75 @@
       xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta content="IE=edge" http-equiv="X-UA-Compatible">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
-    <title>근태관리 메인 페이지</title>
-    <style> .button-container {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        gap: 2rem;
-    }
-
-    button {
-        width: 150px;
-        height: 50px;
-        font-size: 1.2rem;
-        cursor: pointer;
-    } </style>
-    <script src="/js/main/main.js"></script>
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+    <title>출 퇴근 기록</title>
 </head>
 <body>
-<header th:replace="~{main/header :: main_headerFragment}"></header> <!--header end-->
-<main class="main">
-    <div class="salary"><h2>누적 급여: ￦0</h2></div>
-    <div class="employee-id"><label for="employee-id-input">직원 아이디:</label> <input id="employee-id-input" type="text">
-    </div>
-    <div class="button-container">
-        <button onclick="startWork()" type="button">출근</button>
-        <button onclick="endWork()" type="button">퇴근</button>
-    </div>
-</main>
-<footer th:replace="~{main/footer :: main_footerFragment}"></footer>
+<header th:replace="~{main/header :: main_headerFragment}">
+</header>
+<div>
+    <h1>출 퇴근 기록</h1>
+    <label for="employeeId"></label><input type="text" id="employeeId" placeholder="사번을 입력하세요">
+    <button id="btnStart">출근</button>
+    <button id="btnEnd">퇴근</button>
+</div>
+
+<script src="/js/jquery.js" crossorigin="anonymous"></script>
+
+<script>
+    $(document).ready(function() {
+        $("#btnStart").click(function() {
+            const employeeId = $("#employeeId").val();
+            const token = $("meta[name='_csrf']").attr("content");
+            const header = $("meta[name='_csrf_header']").attr("content");
+            if (employeeId) {
+                $.ajax({
+                    url: `/api/attendances/start/${employeeId}`,
+                    method: "POST",
+                    contentType: "application/json",
+                    data: { employeeId: employeeId },
+                    beforeSend: function (xhr) {   /*데이터를 전송하기 전에 헤더에 csrf값을 설정한다*/
+                        xhr.setRequestHeader(header, token);
+                    },
+                    success: function(response) {
+                        console.log("출근 처리 완료");
+                    },
+                    error: function(xhr, textStatus, errorThrown) {
+                        console.log("출근 처리 실패");
+                    }
+                });
+            } else {
+                alert("사번을 입력하세요.");
+            }
+        });
+
+        $("#btnEnd").click(function() {
+            const employeeId = $("#employeeId").val();
+            if (employeeId) {
+                $.ajax({
+                    url: "/api/attendances/end",
+                    method: "POST",
+                    contentType: "application/json",
+                    data: JSON.stringify({ employeeId: employeeId }),
+                    success: function(response) {
+                        console.log("퇴근 처리 완료");
+                    },
+                    error: function(xhr, textStatus, errorThrown) {
+                        console.log("퇴근 처리 실패");
+                    }
+                });
+            } else {
+                alert("사번을 입력하세요.");
+            }
+        });
+    });
+
+</script>
+
+<footer th:replace="~{main/footer :: main_footerFragment}">
+</footer>
 </body>
 </html>

@@ -1,16 +1,14 @@
-package com.example.absenteeismerp.dto;
+package com.example.wagesystem.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.example.wagesystem.domain.Employee;
+import lombok.*;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
-
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
+@Getter
+@Setter
 public class AttendanceDto {
+
+    private Employee employee;
 
     private Long attendanceId;
 
@@ -20,7 +18,12 @@ public class AttendanceDto {
 
     private LocalDateTime endTime;
 
-    private BigDecimal dailyWage;
+    public AttendanceDto(Long attendanceId, Long employeeId,LocalDateTime startTime, LocalDateTime endTime, Employee employee) {
+        this.attendanceId = attendanceId;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.employee = employee;
+//        this.employeeId = employeeId;
+    }
 
-    private BigDecimal weeklyAllowance;
 }

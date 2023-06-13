@@ -30,7 +30,7 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     runtimeOnly("com.mysql:mysql-connector-j")
-
+    implementation 'io.springfox:springfox-boot-starter:3.0.0'
     //spring dev tools
 
     //query parameter log
@@ -44,12 +44,6 @@ dependencies {
 
     //타임리프에도 스프링 시큐리티 통합 모듈을 사용하기 위해 의존성 추가
     implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity5'
-
-    //멀티 파일 업로드
-    compile group: 'commons-fileupload', name: 'commons-fileupload', version: '1.5'
-
-    // commons-fileupload
-    implementation 'commons-io:commons-io:2.11.0'
 
     //웹 크롤링
     compile group: 'org.jsoup', name: 'jsoup', version: '1.15.3'

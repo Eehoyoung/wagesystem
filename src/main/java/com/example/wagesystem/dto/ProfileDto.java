@@ -1,6 +1,5 @@
-package com.example.absenteeismerp.dto;
+package com.example.wagesystem.dto;
 
-import com.example.absenteeismerp.model.type.Position;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -19,4 +18,12 @@ public class ProfileDto {
     private Position position;
 
     private String[] phoneNumber;
+
+    private String[] EmPhoneNumber;
+
+    private String[] birthday;
+
+    private int hourWage;
+
+
 }
