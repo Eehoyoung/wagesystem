@@ -53,10 +53,7 @@ public class Employee extends BaseTimeEntity {
     private String birthday;
 
     @Column
-    private int hourwage;
-
-    @Column
-    private BigDecimal dailyWage;
+    private BigDecimal hourwage;
 
     @Column
     private BigDecimal monthWage;
@@ -72,7 +69,7 @@ public class Employee extends BaseTimeEntity {
 
     @Builder
     public Employee(Long employeeId, String loginId, String name, String loginPw, String store, String phoneNumber, Position position
-            , Date resignationDate, String birthday, String EmPhoneNumber, int hourwage) {
+            , Date resignationDate, String birthday, String EmPhoneNumber, BigDecimal hourwage) {
         this.employeeId = employeeId;
         this.loginId = loginId;
         this.name = name;

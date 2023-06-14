@@ -99,9 +99,9 @@ public class EmployeeServiceImpl implements EmployeeService, UserDetailsService 
                 () -> new LoginIdNotFoundException("해당하는 회원이 존재하지 않습니다")
         );
 
-        for (int i = 0; i < findMember.getPayList().size(); i++) {
-            monthWage.add(findMember.getPayList().get(i).getEmployee().getDailyWage());
-        }
+//        for (int i = 0; i < findMember.getPayList().size(); i++) {
+//            monthWage.add(findMember.getPayList().get(i).getEmployee().getDailyWage());
+//        }
 
         tax = monthWage.multiply(BigDecimal.valueOf(0.033));
 

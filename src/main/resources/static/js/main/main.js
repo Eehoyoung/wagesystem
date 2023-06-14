@@ -1,6 +1,6 @@
-$(document).ready(function() {
+$(document).ready(function () {
     alert("00")
-    $("#checkInBtn").click(function() {
+    $("#checkInBtn").click(function () {
         const employeeId = $("#employeeId").val();
         const checkInTime = new Date().toISOString();
 
@@ -8,17 +8,17 @@ $(document).ready(function() {
         $.ajax({
             url: "/start-work",
             type: "POST",
-            data: { employeeId, checkInTime },
-            success: function(response) {
+            data: {employeeId, checkInTime},
+            success: function (response) {
                 console.log(response); // 출근 처리 성공 메시지 출력
             },
-            error: function(err) {
+            error: function (err) {
                 console.error(err); // 에러 메시지 출력
             }
         });
     });
 
-    $("#checkOutBtn").click(function() {
+    $("#checkOutBtn").click(function () {
         const employeeId = $("#employeeId").val();
         const checkOutTime = new Date().toISOString();
 
@@ -26,11 +26,11 @@ $(document).ready(function() {
         $.ajax({
             url: "/end-work",
             type: "POST",
-            data: { employeeId, checkOutTime },
-            success: function(response) {
+            data: {employeeId, checkOutTime},
+            success: function (response) {
                 console.log(response); // 퇴근 처리 성공 메시지 출력
             },
-            error: function(err) {
+            error: function (err) {
                 console.error(err); // 에러 메시지 출력
             }
         });

@@ -3,6 +3,8 @@ package com.example.wagesystem.dto;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.math.BigDecimal;
+
 @Getter
 @Setter
 public class ProfileDto {
@@ -23,7 +25,7 @@ public class ProfileDto {
 
     private String[] birthday;
 
-    private int hourWage;
+    private BigDecimal hourWage;
 
 
 }

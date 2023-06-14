@@ -14,16 +14,17 @@
 </header>
 <div>
     <h1>출 퇴근 기록</h1>
-    <label for="employeeId"></label><input type="text" id="employeeId" placeholder="사번을 입력하세요">
+    <label for="employeeId"></label><input id="employeeId" placeholder="사번을 입력하세요" type="text">
     <button id="btnStart">출근</button>
     <button id="btnEnd">퇴근</button>
 </div>
 
-<script src="/js/jquery.js" crossorigin="anonymous"></script>
+<script crossorigin="anonymous" src="/js/jquery.js"></script>
 
 <script>
-    $(document).ready(function() {
-        $("#btnStart").click(function() {
+    $(document).ready(function () {
+        $("#btnStart").click(function () {
+            confirm("관리자 승인을 받으셨나요?")
             const employeeId = $("#employeeId").val();
             const token = $("meta[name='_csrf']").attr("content");
             const header = $("meta[name='_csrf_header']").attr("content");
@@ -32,15 +33,15 @@
                     url: `/api/attendances/start/${employeeId}`,
                     method: "POST",
                     contentType: "application/json",
-                    data: { employeeId: employeeId },
+                    data: {employeeId: employeeId},
                     beforeSend: function (xhr) {   /*데이터를 전송하기 전에 헤더에 csrf값을 설정한다*/
                         xhr.setRequestHeader(header, token);
                     },
-                    success: function(response) {
-                        console.log("출근 처리 완료");
+                    success: function (response) {
+                        alert("출근처리 완료");
                     },
-                    error: function(xhr, textStatus, errorThrown) {
-                        console.log("출근 처리 실패");
+                    error: function (xhr, textStatus, errorThrown) {
+                        alert("출근 처리 실패");
                     }
                 });
             } else {
@@ -48,18 +49,23 @@
             }
         });
 
-        $("#btnEnd").click(function() {
+        $("#btnEnd").click(function () {
             const employeeId = $("#employeeId").val();
+            const token = $("meta[name='_csrf']").attr("content");
+            const header = $("meta[name='_csrf_header']").attr("content");
             if (employeeId) {
                 $.ajax({
-                    url: "/api/attendances/end",
+                    url: `/api/attendances/end/${employeeId}`,
                     method: "POST",
                     contentType: "application/json",
-                    data: JSON.stringify({ employeeId: employeeId }),
-                    success: function(response) {
+                    data: {employeeId: employeeId},
+                    beforeSend: function (xhr) {   /*데이터를 전송하기 전에 헤더에 csrf값을 설정한다*/
+                        xhr.setRequestHeader(header, token);
+                    },
+                    success: function (response) {
                         console.log("퇴근 처리 완료");
                     },
-                    error: function(xhr, textStatus, errorThrown) {
+                    error: function (xhr, textStatus, errorThrown) {
                         console.log("퇴근 처리 실패");
                     }
                 });

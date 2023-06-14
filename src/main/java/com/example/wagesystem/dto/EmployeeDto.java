@@ -4,6 +4,7 @@ import com.querydsl.core.annotations.QueryProjection;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Date;
 
@@ -30,11 +31,11 @@ public class EmployeeDto {
 
     private String store;
 
-    private int hourWage;
+    private BigDecimal hourWage;
 
     @QueryProjection
     public EmployeeDto(Long EmployeeId, String loginId, String name, Position position, Date resignationDate, String store, String phoneNumber
-            , LocalDate hireDate, int hourWage, String emPhoneNumber) {
+            , LocalDate hireDate, BigDecimal hourWage, String emPhoneNumber) {
         this.EmployeeId = EmployeeId;
         this.loginId = loginId;
         this.name = name;

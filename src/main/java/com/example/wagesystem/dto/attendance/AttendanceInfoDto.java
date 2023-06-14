@@ -1,9 +1,11 @@
-package com.example.wagesystem.dto;
+package com.example.wagesystem.dto.attendance;
 
 import com.example.wagesystem.domain.Attendance;
 import com.example.wagesystem.domain.Employee;
 import lombok.*;
 
+import java.math.BigDecimal;
+import java.sql.Time;
 import java.time.LocalDateTime;
 
 @Getter
@@ -20,12 +22,18 @@ public class AttendanceInfoDto {
 
     private LocalDateTime endTime;
 
+    private Time workTime;
+
+    private BigDecimal dailyWage;
+
     @Builder
-    public AttendanceInfoDto(Long attendanceId, Long employeeId, LocalDateTime startTime, LocalDateTime endTime) {
+    public AttendanceInfoDto(Long attendanceId, Long employeeId, LocalDateTime startTime, LocalDateTime endTime, Time workTime, BigDecimal dailyWage) {
         this.attendanceId = attendanceId;
         this.employeeId = employeeId;
         this.startTime = startTime;
         this.endTime = endTime;
+        this.workTime = workTime;
+        this.dailyWage = dailyWage;
     }
 
     public Attendance toEntity(Employee employee) {
@@ -34,6 +42,8 @@ public class AttendanceInfoDto {
                 .employee(employee)
                 .startTime(startTime)
                 .endTime(endTime)
+                .workTime(workTime)
+                .dailyWage(dailyWage)
                 .build();
     }
 }

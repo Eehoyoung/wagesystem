@@ -3,8 +3,8 @@ package com.example.wagesystem.controller;
 
 import com.example.wagesystem.domain.Attendance;
 import com.example.wagesystem.domain.Employee;
-import com.example.wagesystem.dto.AttendanceDto;
-import com.example.wagesystem.dto.AttendanceInfoDto;
+import com.example.wagesystem.dto.attendance.AttendanceInfoDto;
+import com.example.wagesystem.repository.AttendanceRepository;
 import com.example.wagesystem.repository.EmployeeRepository;
 import com.example.wagesystem.sservice.AttendanceServiceImpl;
 import javassist.tools.rmi.ObjectNotFoundException;
@@ -28,39 +28,34 @@ public class AttendanceController {
 
     private final EmployeeRepository employeeRepository;
     private final AttendanceServiceImpl attendanceService;
+    private final AttendanceRepository attendanceRepository;
 
     @Autowired
-    public AttendanceController(EmployeeRepository employeeRepository, AttendanceServiceImpl attendanceService) {
+    public AttendanceController(EmployeeRepository employeeRepository, AttendanceServiceImpl attendanceService, AttendanceRepository attendanceRepository) {
         this.employeeRepository = employeeRepository;
         this.attendanceService = attendanceService;
+        this.attendanceRepository = attendanceRepository;
     }
-
-//    @PostMapping
-//    public ResponseEntity<AttendanceDto> createAttendance(@RequestBody @Valid AttendanceDto attendanceDto) {
-//        Long createdAttendanceId = attendanceService.createAttendance(attendanceDto);
-//        AttendanceDto createdAttendance = attendanceService.getAttendanceById(createdAttendanceId);
-//        return ResponseEntity.status(HttpStatus.CREATED).body(createdAttendance);
-//    }
 
     @GetMapping("/{attendanceId}")
-    public ResponseEntity<AttendanceDto> getAttendanceById(@PathVariable Long attendanceId) {
-        AttendanceDto attendanceDto = attendanceService.getAttendanceById(attendanceId);
-        return ResponseEntity.ok(attendanceDto);
+    public ResponseEntity<AttendanceInfoDto> getAttendanceById(@PathVariable Long attendanceId) {
+        AttendanceInfoDto attendanceInfoDto = attendanceService.getAttendanceById(attendanceId);
+        return ResponseEntity.ok(attendanceInfoDto);
     }
 
-    @GetMapping
-    public ResponseEntity<List<AttendanceDto>> getAllAttendances() {
-        List<AttendanceDto> attendances = attendanceService.getAllAttendances();
+    @GetMapping("/attendance/list")
+    public ResponseEntity<List<AttendanceInfoDto>> getAllAttendances() {
+        List<AttendanceInfoDto> attendances = attendanceService.getAllAttendances();
         return ResponseEntity.ok(attendances);
     }
 
-    @PutMapping("/{attendanceId}")
-    public ResponseEntity<Void> updateAttendance(@PathVariable Long attendanceId, @RequestBody @Valid AttendanceDto attendanceDto) {
-        attendanceService.updateAttendance(attendanceId, attendanceDto);
+    @PutMapping("/update/{attendanceId}")
+    public ResponseEntity<Void> updateAttendance(@PathVariable Long attendanceId, @RequestBody @Valid AttendanceInfoDto attendanceInfoDto) {
+        attendanceService.updateAttendance(attendanceId, attendanceInfoDto);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
-    @DeleteMapping("/{attendanceId}")
+    @DeleteMapping("/delete/{attendanceId}")
     public ResponseEntity<Void> deleteAttendance(@PathVariable Long attendanceId) {
         attendanceService.deleteAttendance(attendanceId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
@@ -75,14 +70,18 @@ public class AttendanceController {
     }
 
     @PostMapping("/start/{employeeId}")
-    public ResponseEntity<Void> startAttendance(@PathVariable Long employeeId) throws ObjectNotFoundException {
+    public ResponseEntity<Void> startAttendance(@PathVariable Long employeeId)
+            throws ObjectNotFoundException {
+
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String loginId = authentication.getName();
-        Optional<Employee> optionalEmployee = employeeRepository.findById(employeeId);
-        if (!optionalEmployee.isPresent()) {
-            // 적절한 예외 처리 및 오류 메시지를 반환하십시오.
-            throw new ObjectNotFoundException("Employee not found");
+
+        Employee employee = validateEmployee(employeeId);
+
+        if (attendanceService.hasAttendanceToday(employeeId)) {
+            throw new ObjectNotFoundException("오늘 이미 출근 처리가 되어 있습니다.");
         }
+
         LocalDateTime startTime = LocalDateTime.now();
 
         AttendanceInfoDto attendanceInfoDto = new AttendanceInfoDto();
@@ -90,35 +89,56 @@ public class AttendanceController {
         attendanceInfoDto.setEmployeeId(employeeRepository.findByEmployeeId(loginId));
         attendanceInfoDto.setStartTime(startTime);
         attendanceInfoDto.setEndTime(null);
+        attendanceInfoDto.setWorkTime(null);
 
         attendanceService.createAttendance(attendanceInfoDto);
         log.info("attendanceDto: {}", attendanceInfoDto);
-        return ResponseEntity.created(null).build();
+        return ResponseEntity.noContent().build();
     }
 
-    @PostMapping("/end")
-    public ResponseEntity<Void> endAttendance(@RequestBody AttendanceDto attendanceDto) {
-        Long employeeId = attendanceDto.getEmployeeId();
-        if (employeeId != null) {
-            Optional<Attendance> latestAttendance = attendanceService.getLatestAttendanceByEmployeeId(employeeId);
-            if (latestAttendance.isPresent()) {
-                Attendance attendance = latestAttendance.get();
+    @PostMapping("/end/{employeeId}")
+    public ResponseEntity<Void> endAttendance(@PathVariable Long employeeId, AttendanceInfoDto attendanceInfoDto)
+            throws ObjectNotFoundException {
 
-                if (attendance.getEndTime() == null) {
-                    LocalDateTime endTime = LocalDateTime.now();
-                    attendanceDto.setAttendanceId(attendance.getAttendanceId());
-                    attendanceDto.setEndTime(endTime);
-                    attendanceService.updateAttendance(attendance.getAttendanceId(), attendanceDto);
-                    return ResponseEntity.created(null).build();
-                } else {
-                    throw new RuntimeException("이미 퇴근 처리된 출근 기록입니다.");
-                }
+        Employee employee = validateEmployee(employeeId);
+
+        Optional<Attendance> latestAttendance = attendanceService.getLatestAttendanceByEmployeeId(employeeId);
+        if (latestAttendance.isPresent()) {
+            Attendance attendance = latestAttendance.get();
+            if (attendance.getEndTime() == null) {
+                LocalDateTime endTime = LocalDateTime.now();
+                attendanceInfoDto.setAttendanceId(attendance.getAttendanceId());
+                attendanceInfoDto.setEndTime(endTime);
+                attendanceInfoDto.setStartTime(attendance.getStartTime());
+                attendanceInfoDto.setWorkTime(attendanceService.calculationWorkTime(attendance.getStartTime(), endTime));
+                attendanceInfoDto.setDailyWage(attendanceService.calculattionDailyWage(
+                        attendanceService.calculationWorkTime(attendance.getStartTime(), endTime),
+                        attendanceRepository.findHourWageByEmployeeId(employeeId)));
+                attendanceService.updateAttendance(attendance.getAttendanceId(), attendanceInfoDto);
+                return ResponseEntity.noContent().build();
             } else {
-                throw new RuntimeException("해당 사원의 출근 기록이 없습니다.");
+                throw new RuntimeException("이미 퇴근 처리된 출근 기록입니다.");
             }
         } else {
-            throw new RuntimeException("요청에 유효하지 않은 사원 ID가 포함되어 있습니다.");
+            throw new RuntimeException("해당 사원의 출근 기록이 없습니다.");
         }
+    }
+
+    private Employee validateEmployee(Long employeeId) throws ObjectNotFoundException {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String loginId = authentication.getName();
+        Optional<Employee> optionalEmployee = employeeRepository.findById(employeeId);
+
+        if (!attendanceService.checkLoginEmployee(loginId, employeeId)) {
+            throw new ObjectNotFoundException("현재 로그인된 사용자의 사번이 아닙니다.");
+        }
+        if (!optionalEmployee.isPresent()) {
+            throw new ObjectNotFoundException("Employee not found");
+        }
+        if (!attendanceService.findAllEmployeeId(employeeId)) {
+            throw new ObjectNotFoundException("존재하지 않는 사번입니다.");
+        }
+        return optionalEmployee.get();
     }
 
 }

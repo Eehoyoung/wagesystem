@@ -1,22 +1,33 @@
 package com.example.wagesystem.sservice;
 
 import com.example.wagesystem.domain.Attendance;
-import com.example.wagesystem.dto.AttendanceDto;
-import com.example.wagesystem.dto.AttendanceInfoDto;
+import com.example.wagesystem.dto.attendance.AttendanceInfoDto;
 
-import java.time.LocalDate;
+import java.math.BigDecimal;
+import java.sql.Time;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
 public interface AttendanceService {
 
-    Long createAttendance(AttendanceDto attendanceDto);
+    BigDecimal calculattionDailyWage(Time workTime, BigDecimal hourWage);
 
-    AttendanceDto getAttendanceById(Long attendanceId);
+    Time calculationWorkTime(LocalDateTime startTime, LocalDateTime endTime);
 
-    List<AttendanceDto> getAllAttendances();
+    boolean findAllEmployeeId(Long employeeId);
 
-    void updateAttendance(Long attendanceId, AttendanceDto attendanceDto);
+    boolean hasAttendanceToday(Long employeeId);
+
+    boolean checkLoginEmployee(String loginId, Long employeeId);
+
+    Long createAttendance(AttendanceInfoDto attendanceInfoDto);
+
+    AttendanceInfoDto getAttendanceById(Long attendanceId);
+
+    List<AttendanceInfoDto> getAllAttendances();
+
+    void updateAttendance(Long attendanceId, AttendanceInfoDto attendanceInfoDto);
 
     void deleteAttendance(Long attendanceId);
 

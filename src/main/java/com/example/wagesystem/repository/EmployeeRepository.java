@@ -12,6 +12,10 @@ import java.util.Optional;
 public interface EmployeeRepository extends JpaRepository<Employee, Long>, EmployeeRepositoryCustom {
     @Query("select e.employeeId from Employee e where e.loginId = :loginid")
     Long findByEmployeeId(@Param("loginid") String loginId);
+
+    @Query("select e.employeeId from Employee e where e.employeeId = :employeeId")
+    String findBySeachAllId(@Param("employeeId") Long employeeId);
+
     Optional<Employee> findByLoginId(String loginId);
 
     void deleteByLoginId(String loginId);

@@ -15,5 +15,5 @@ public class MyPageDto {
 
     private BigDecimal pay;
 
-    private int hourWage;
+    private BigDecimal hourWage;
 }
