@@ -1,16 +1,21 @@
 package com.example.wagesystem.sservice;
 
+import com.example.wagesystem.domain.Attendance;
 import com.example.wagesystem.domain.Employee;
+import com.example.wagesystem.domain.Resignation;
 import com.example.wagesystem.domain.SearchEmployee;
 import com.example.wagesystem.dto.*;
 import com.example.wagesystem.exeption.LoginIdNotFoundException;
 import com.example.wagesystem.repository.EmployeeRepository;
+import com.example.wagesystem.repository.ResignationRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -20,16 +25,46 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class EmployeeServiceImpl implements EmployeeService, UserDetailsService {
 
-    @Autowired
     private EmployeeRepository employeeRepository;
+
+    private ResignationRepository resignationRepository;
+
+    @Autowired
+    public EmployeeServiceImpl(EmployeeRepository employeeRepository, ResignationRepository resignationRepository) {
+        this.employeeRepository = employeeRepository;
+        this.resignationRepository = resignationRepository;
+    }
+
+    @Override
+    @Transactional
+    public Long tempEmployeeResignation(ResignationDto resignationDto) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String loginId = authentication.getName();
+
+        Long employeeId = employeeRepository.findByEmployeeId(loginId);
+        // 기존 직원 데이터를 가져옵니다.
+        Employee employee = employeeRepository.findById(employeeId)
+                .orElseThrow(() -> new NoSuchElementException("No employee found with Id " + employeeId));
+
+        // 퇴사자 데이터를 생성하고 값을 설정합니다.
+        Resignation resignation = new Resignation(resignationDto.getREmployeeId(),
+                employee.getName(), employee.getPhoneNumber(), employee.getHireDate(), LocalDate.now());
+
+        // 퇴사자 데이터를 저장합니다.
+        resignationRepository.save(resignation);
+
+        return resignation.getREmployeeId();
+    }
 
     @Override
     @Transactional
@@ -70,9 +105,23 @@ public class EmployeeServiceImpl implements EmployeeService, UserDetailsService 
                 () -> new LoginIdNotFoundException("해당하는 회원을 찾을 수 없습니다.")
         );
 
-        String emPhoneNumberResult = profileDto.getEmPhoneNumber()[0] + "," + profileDto.getEmPhoneNumber()[1] + "," + profileDto.getEmPhoneNumber()[2];
-        String phoneNumberResult = profileDto.getPhoneNumber()[0] + "," + profileDto.getPhoneNumber()[1] + "," + profileDto.getPhoneNumber()[2];
+        String emPhoneNumberResult = "";
+        String phoneNumberResult = "";
+        String birthdayResult = "";
 
+        if (profileDto.getBirthday().length >= 3) {
+            birthdayResult = profileDto.getBirthday()[0] + "," + profileDto.getBirthday()[1] + "," + profileDto.getBirthday()[2];
+        }
+
+        if (profileDto.getEmPhoneNumber().length >= 3) {
+            emPhoneNumberResult = profileDto.getEmPhoneNumber()[0] + "," + profileDto.getEmPhoneNumber()[1] + "," + profileDto.getEmPhoneNumber()[2];
+        }
+
+        if (profileDto.getPhoneNumber().length >= 3) {
+            phoneNumberResult = profileDto.getPhoneNumber()[0] + "," + profileDto.getPhoneNumber()[1] + "," + profileDto.getPhoneNumber()[2];
+        }
+
+        findEmployee.setBirthday(birthdayResult);
         findEmployee.setName(profileDto.getName());
         findEmployee.setLoginId(profileDto.getLoginId());
         findEmployee.setLoginPw(encoder.encode(profileDto.getLoginPw()));
@@ -91,26 +140,31 @@ public class EmployeeServiceImpl implements EmployeeService, UserDetailsService 
 
     @Override
     public MyPageDto showSimpleInfo(String loginId) {
-        BigDecimal monthWage = BigDecimal.valueOf(0);
-        BigDecimal tax;
-        MyPageDto myPageDto = new MyPageDto();
+        Employee findMember = employeeRepository.findByLoginId(loginId)
+                .orElseThrow(() -> new LoginIdNotFoundException("해당하는 회원이 존재하지 않습니다"));
 
-        Employee findMember = employeeRepository.findByLoginId(loginId).orElseThrow(
-                () -> new LoginIdNotFoundException("해당하는 회원이 존재하지 않습니다")
-        );
+        List<Attendance> payList = findMember.getPayList();
 
-//        for (int i = 0; i < findMember.getPayList().size(); i++) {
-//            monthWage.add(findMember.getPayList().get(i).getEmployee().getDailyWage());
-//        }
+        for (Attendance attendance : payList) {
+            // 초기화를 위해 모든 대리 연산을 수행해야 함
+            attendance.getAttendanceId();
+        }
 
-        tax = monthWage.multiply(BigDecimal.valueOf(0.033));
+        BigDecimal monthWage = BigDecimal.ZERO;
 
-        myPageDto.setName(findMember.getName());
-        myPageDto.setPosition(findMember.getPosition());
-        myPageDto.setPay(monthWage.subtract(tax));
-        myPageDto.setHourWage(findMember.getHourwage());
+        for (int i = 0; i < findMember.getPayList().size(); i++) {
+            monthWage = monthWage.add(findMember.getPayList().get(i).getDailyWage());
+            if (findMember.getPayList().get(i).getDailyWage() != null) {
+                monthWage = monthWage.add(findMember.getPayList().get(i).getDailyWage());
+            }
+        }
 
-        return myPageDto;
+        return MyPageDto.builder()
+                .name(findMember.getName())
+                .position(findMember.getPosition())
+                .pay(monthWage)
+                .hourWage(findMember.getHourwage())
+                .build();
     }
 
     @Transactional(readOnly = true)

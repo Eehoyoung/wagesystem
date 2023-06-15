@@ -3,9 +3,13 @@ package com.example.wagesystem.sservice;
 import com.example.wagesystem.domain.Attendance;
 import com.example.wagesystem.domain.Employee;
 import com.example.wagesystem.dto.attendance.AttendanceInfoDto;
+import com.example.wagesystem.dto.attendance.AttendancePageDto;
+import com.example.wagesystem.exeption.LoginIdNotFoundException;
 import com.example.wagesystem.repository.AttendanceRepository;
 import com.example.wagesystem.repository.EmployeeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -33,6 +37,26 @@ public class AttendanceServiceImpl implements AttendanceService {
     public AttendanceServiceImpl(EmployeeRepository employeeRepository, AttendanceRepository attendanceRepository) {
         this.employeeRepository = employeeRepository;
         this.attendanceRepository = attendanceRepository;
+    }
+
+    @Override
+    public AttendancePageDto getWagePagingDto(String loginId, Pageable pageable) {
+
+        AttendancePageDto attendancePageDto = new AttendancePageDto();
+
+        Employee findEmployee = employeeRepository.findByLoginId(loginId).orElseThrow(
+                () -> new LoginIdNotFoundException("해당하느느 회원이 존재하지 않습니다.")
+        );
+
+        Page<Attendance> attendanceBoard = attendanceRepository.findAllByEmployee(findEmployee, pageable);
+        int homeStartPage = Math.max(1, attendanceBoard.getPageable().getPageNumber()-4);
+        int homeEndPage = Math.min(attendanceBoard.getTotalPages(), attendanceBoard.getPageable().getPageNumber() + 4);
+
+        attendancePageDto.setPayboards(attendanceBoard);
+        attendancePageDto.setHomeStartPage(homeStartPage);
+        attendancePageDto.setHomeEndPage(homeEndPage);
+
+        return attendancePageDto;
     }
 
     @Transactional
@@ -96,7 +120,8 @@ public class AttendanceServiceImpl implements AttendanceService {
                 attendanceInfoDto.getStartTime(),
                 attendanceInfoDto.getEndTime(),
                 attendanceInfoDto.getWorkTime(),
-                attendanceInfoDto.getDailyWage())
+                attendanceInfoDto.getDailyWage(),
+                attendanceInfoDto.getWorkDay())
                 .toEntity(employee);
 
         attendanceRepository.save(attendance);
@@ -112,7 +137,7 @@ public class AttendanceServiceImpl implements AttendanceService {
             Attendance attendance = attendanceOptional.get();
 
             return new AttendanceInfoDto(attendance.getAttendanceId(), attendance.getEmployee().getEmployeeId()
-                    , attendance.getStartTime(), attendance.getEndTime(), attendance.getWorkTime(), attendance.getDailyWage());
+                    , attendance.getStartTime(), attendance.getEndTime(), attendance.getWorkTime(), attendance.getDailyWage(), attendance.getWorkDay());
         } else {
             throw new RuntimeException("Attendance not found");
         }
@@ -125,7 +150,7 @@ public class AttendanceServiceImpl implements AttendanceService {
         return attendances.stream().map(
                         attendance -> new AttendanceInfoDto(
                                 attendance.getAttendanceId(), attendance.getEmployee().getEmployeeId(),
-                                attendance.getStartTime(), attendance.getEndTime(), attendance.getWorkTime(), attendance.getDailyWage()))
+                                attendance.getStartTime(), attendance.getEndTime(), attendance.getWorkTime(), attendance.getDailyWage(), attendance.getWorkDay()))
                 .collect(Collectors.toList()
                 );
     }

@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Antonio&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.3/css/all.css" integrity="sha384-SZXxX4whJ79/gErwcOYf+zWLeJdY/qpuqC4cAa9rOGUstPomtqpuNWT9wdPEn2fk" crossorigin="anonymous">
+  <title>mileage</title>
+  <script src="/js/jquery.js"></script>
+</head>
+<body>
+<!--header start-->
+<header th:replace="main/header :: main_headerFragment">
+</header>
+<!--header end-->
+
+<!--section-->
+<section>
+  <div class="section_caption">
+    MILEAGE
+  </div>
+  <div class="mileage_summary">
+    <div class="mileage_summary_left">
+      <div class="summary_item">
+        <span><i class="fas fa-chevron-right"></i> <span>총 급여</span></span>
+        <span th:text="${#numbers.formatInteger(totalWage, 0, 'COMMA')} + '원'">2,000원</span>
+      </div>
+      <div class="summary_item">
+        <span><i class="fas fa-chevron-right"></i> <span>세금 공제(3.3%)</span></span>
+        <span th:text="${#numbers.formatInteger(tax, 0, 'COMMA')} + '원'">0원</span>
+      </div>
+    </div>
+    <div class="mileage_summary_right">
+      <div class="summary_item">
+        <span><i class="fas fa-chevron-right"></i> <span>지급 예정 급여</span></span>
+        <span th:text="${#numbers.formatInteger(realWage, 0, 'COMMA')} + '원'">2,000원</span>
+      </div>
+    </div>
+  </div>
+  <div class="section_content">
+    <div class="mileage_caption">
+      <div >근무내역</div>
+    </div>
+    <div >
+      <div class="wage_content">
+        <table>
+          <colgroup>
+            <col width="15%">
+            <col width="15%">
+            <col width="auto">
+          </colgroup>
+          <thead>
+          <tr>
+            <td>근무일</td>
+            <td>일급</td>
+            <td>근무 시간</td>
+          </tr>
+          </thead>
+          <tbody>
+          <tr th:each="wage:${wageList}">
+            <td th:text="${wage.workDay}">2021-05-11</td>
+            <td th:text="${#numbers.formatInteger(wage.dailyWage, 0, 'COMMA')} + '원'">2,000원</td>
+            <td th:text="${wage.workTime}"> 근무 시간</td>
+          </tr>
+          </tbody>
+        </table>
+
+        <!--검색결과가 있는 경우 없는 영역-->
+        <!--                    <div class="nosearch" th:if="${#lists.isEmpty(mileageList)}">-->
+        <!--                        적립내역이 없습니다.-->
+        <!--                    </div>-->
+
+      </div>
+      <ul class="pagenation">
+        <li th:classappend="${1 == wageList.pageable.pageNumber + 1} ? 'disabled'">
+          <a href="#" class="prev bracket" th:href="@{/main/mileage(page=${wageList.pageable.pageNumber - 1})}" tabindex="-1" aria-disabled="true">
+            <i class="fas fa-chevron-left"></i> PREV
+          </a>
+        </li>
+        <li th:classappend="${i == wageList.pageable.pageNumber + 1} ? 'disabled'" th:each="i : ${#numbers.sequence(startPage, endPage)}">
+          <a href="#" class="pagenum" th:href="@{/main/mileage(page=${i - 1})}" th:text="${i}">1</a>
+        </li>
+        <li th:classappend="${wageList.totalPages == wageList.pageable.pageNumber + 1} ? 'disabled'">
+          <a href="#" class="next bracket" th:href="@{/main/mileage(page=${wageList.pageable.pageNumber + 1})}">
+            NEXT <i class="fas fa-chevron-right"></i>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!--footer-->
+<footer th:replace="main/footer :: main_footerFragment">
+</footer>
+
+
+</body>
+</html>

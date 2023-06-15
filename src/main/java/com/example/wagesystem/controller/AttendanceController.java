@@ -7,6 +7,7 @@ import com.example.wagesystem.dto.attendance.AttendanceInfoDto;
 import com.example.wagesystem.repository.AttendanceRepository;
 import com.example.wagesystem.repository.EmployeeRepository;
 import com.example.wagesystem.sservice.AttendanceServiceImpl;
+import io.swagger.annotations.ApiOperation;
 import javassist.tools.rmi.ObjectNotFoundException;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,38 +38,36 @@ public class AttendanceController {
         this.attendanceRepository = attendanceRepository;
     }
 
+    @ApiOperation("근태기록 조회(attendanceId 기반")
     @GetMapping("/{attendanceId}")
     public ResponseEntity<AttendanceInfoDto> getAttendanceById(@PathVariable Long attendanceId) {
         AttendanceInfoDto attendanceInfoDto = attendanceService.getAttendanceById(attendanceId);
         return ResponseEntity.ok(attendanceInfoDto);
     }
 
+    @ApiOperation("근태기록 리스트 출력")
     @GetMapping("/attendance/list")
     public ResponseEntity<List<AttendanceInfoDto>> getAllAttendances() {
         List<AttendanceInfoDto> attendances = attendanceService.getAllAttendances();
         return ResponseEntity.ok(attendances);
     }
 
+    @ApiOperation("근태기록 변경")
     @PutMapping("/update/{attendanceId}")
     public ResponseEntity<Void> updateAttendance(@PathVariable Long attendanceId, @RequestBody @Valid AttendanceInfoDto attendanceInfoDto) {
         attendanceService.updateAttendance(attendanceId, attendanceInfoDto);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
+    @ApiOperation("근태기록 삭제")
     @DeleteMapping("/delete/{attendanceId}")
     public ResponseEntity<Void> deleteAttendance(@PathVariable Long attendanceId) {
         attendanceService.deleteAttendance(attendanceId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
-    @GetMapping("/api/login")
-    public ResponseEntity<String> getLoginEmployeeLoginId() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String loginId = authentication.getName();
 
-        return ResponseEntity.ok(loginId);
-    }
-
+    @ApiOperation("출근")
     @PostMapping("/start/{employeeId}")
     public ResponseEntity<Void> startAttendance(@PathVariable Long employeeId)
             throws ObjectNotFoundException {
@@ -76,7 +75,7 @@ public class AttendanceController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String loginId = authentication.getName();
 
-        Employee employee = validateEmployee(employeeId);
+        Employee employee = validateEmployee(employeeId); // 중복 코드 분리
 
         if (attendanceService.hasAttendanceToday(employeeId)) {
             throw new ObjectNotFoundException("오늘 이미 출근 처리가 되어 있습니다.");
@@ -90,12 +89,14 @@ public class AttendanceController {
         attendanceInfoDto.setStartTime(startTime);
         attendanceInfoDto.setEndTime(null);
         attendanceInfoDto.setWorkTime(null);
+        attendanceInfoDto.setWorkDay(startTime.toLocalDate());
 
         attendanceService.createAttendance(attendanceInfoDto);
         log.info("attendanceDto: {}", attendanceInfoDto);
         return ResponseEntity.noContent().build();
     }
 
+    @ApiOperation("퇴근")
     @PostMapping("/end/{employeeId}")
     public ResponseEntity<Void> endAttendance(@PathVariable Long employeeId, AttendanceInfoDto attendanceInfoDto)
             throws ObjectNotFoundException {
@@ -115,6 +116,7 @@ public class AttendanceController {
                         attendanceService.calculationWorkTime(attendance.getStartTime(), endTime),
                         attendanceRepository.findHourWageByEmployeeId(employeeId)));
                 attendanceService.updateAttendance(attendance.getAttendanceId(), attendanceInfoDto);
+                log.info("attendanceDto: {}", attendanceInfoDto);
                 return ResponseEntity.noContent().build();
             } else {
                 throw new RuntimeException("이미 퇴근 처리된 출근 기록입니다.");

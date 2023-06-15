@@ -2,6 +2,7 @@ package com.example.wagesystem.controller;
 
 import com.example.wagesystem.dto.EmployeeInfoDto;
 import com.example.wagesystem.sservice.EmployeeServiceImpl;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -20,6 +21,7 @@ public class LoginController {
     @Autowired
     private EmployeeServiceImpl employeeService;
 
+    @ApiOperation("로그인")
     @GetMapping("/main/login")
     public String loginPage(HttpServletRequest request, @RequestParam(value = "error", required = false) String error, Model model) {
 
@@ -36,11 +38,13 @@ public class LoginController {
 
     }
 
+    @ApiOperation("회원가입 요청")
     @GetMapping("main/register")
     public String getRegisterPage() {
         return "main/register_user";
     }
 
+    @ApiOperation("회원가입")
     @PostMapping("main/register")
     public String doRegisterPage(EmployeeInfoDto employeeInfoDto) {
         Long memberId = employeeService.joinEmployee(employeeInfoDto);
@@ -60,6 +64,7 @@ public class LoginController {
         return "redirect:/main/index";
     }
 
+    @ApiOperation("아이디 중복 확인")
     @ResponseBody
     @PostMapping("/main/register/doublecheck")
     public String inDoubleCheck(@RequestParam(value = "registerId") String registerId) {

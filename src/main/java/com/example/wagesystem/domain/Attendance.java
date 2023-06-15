@@ -8,6 +8,7 @@ import lombok.Setter;
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.sql.Time;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -38,16 +39,20 @@ public class Attendance {
     @Column
     private BigDecimal dailyWage;
 
+    @Column
+    private LocalDate workDay;
+
 
     @Builder
     public Attendance(Long attendanceId, Employee employee, LocalDateTime startTime, LocalDateTime endTime, Time workTime,
-                      BigDecimal dailyWage) {
+                      BigDecimal dailyWage, LocalDate workDay) {
         this.attendanceId = attendanceId;
         this.employee = employee;
         this.startTime = startTime;
         this.endTime = endTime;
         this.workTime = workTime;
         this.dailyWage = dailyWage;
+        this.workDay = workDay;
     }
 
     public void setEmployee(Employee employee) {

@@ -30,12 +30,13 @@
 </head>
 <body>
 <header th:fragment="main_headerFragment">
-    <!--  <img src="logo.png" alt="Logo" />-->
     <a class="logo" href="/main/index">근태관리 프로젝트</a>
     <nav class="nav">
-        <a class="top_list_first" href="/main/login" sec:authorize="isAnonymous()">로그인</a>
-        <a class="arrow_box_wrapper" href="/main/register" sec:authorize="isAnonymous()"> 회원가입 </a>
-        <a href="/main/mypage" sec:autorize="isAuthenticated()">정보수정</a>
+        <a href="/main/login" sec:authorize="isAnonymous()">로그인</a>
+        <a href="/main/register" sec:authorize="isAnonymous()"> 회원가입 </a>
+        <a href="/main/mypage" sec:authorize="isAuthenticated()">마이페이지</a>
+        <a href="/logout" sec:authorize="isAuthenticated()">로그아웃</a>
+        <a href="/main/profile" sec:authorize="isAuthenticated()">회원 정보 수정</a>
     </nav>
 </header>
 </body>

@@ -58,7 +58,7 @@ public class Employee extends BaseTimeEntity {
     @Column
     private BigDecimal monthWage;
 
-    @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Attendance> payList = new ArrayList<>();
 
     public Employee(String name, String loginId, String loginPw) {

@@ -26,7 +26,7 @@
     <!-- 로그인 되어있는 상태에서 로그인 페이지 들어오면 튕겨내기 위함-->
     <input id="loginTrue" sec:authorize="isAuthenticated()" type="hidden" value="loginTrue">
 
-    <form action="/main/login" class="loginform" method="POST" onsubmit="return sendit()">
+    <form action="/main/login" class="loginform" method="POST" onsubmit="return lsendit()">
 
         <div class="login_caption">LOGIN PAGE</div>
         <div class="login_content">

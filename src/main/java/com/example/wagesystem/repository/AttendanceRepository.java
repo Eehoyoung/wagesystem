@@ -1,6 +1,9 @@
 package com.example.wagesystem.repository;
 
 import com.example.wagesystem.domain.Attendance;
+import com.example.wagesystem.domain.Employee;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
@@ -19,4 +22,6 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Long>, Q
 
     @Query("select e.hourwage from Employee e where e.employeeId = :employeeId")
     BigDecimal findHourWageByEmployeeId(@Param("employeeId") Long employeeId);
+
+    Page<Attendance> findAllByEmployee (Employee employee, Pageable pageable);
 }

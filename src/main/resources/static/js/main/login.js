@@ -1,4 +1,4 @@
-function sendit() {
+function lsendit() {
     if ($('input[name=loginId]').val() == '') {
         alert('아이디를 입력해주세요');
         $('input[name=loginId]').focus();

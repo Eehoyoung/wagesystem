@@ -2,6 +2,8 @@ package com.example.wagesystem.sservice;
 
 import com.example.wagesystem.domain.Attendance;
 import com.example.wagesystem.dto.attendance.AttendanceInfoDto;
+import com.example.wagesystem.dto.attendance.AttendancePageDto;
+import org.springframework.data.domain.Pageable;
 
 import java.math.BigDecimal;
 import java.sql.Time;
@@ -10,6 +12,8 @@ import java.util.List;
 import java.util.Optional;
 
 public interface AttendanceService {
+
+    AttendancePageDto getWagePagingDto(String loginId, Pageable pageable);
 
     BigDecimal calculattionDailyWage(Time workTime, BigDecimal hourWage);
 
