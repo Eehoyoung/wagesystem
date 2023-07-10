@@ -1,6 +1,5 @@
 package com.example.wagesystem.sservice;
 
-import com.example.wagesystem.domain.Attendance;
 import com.example.wagesystem.domain.Employee;
 import com.example.wagesystem.domain.Resignation;
 import com.example.wagesystem.domain.SearchEmployee;
@@ -8,6 +7,7 @@ import com.example.wagesystem.dto.*;
 import com.example.wagesystem.exeption.LoginIdNotFoundException;
 import com.example.wagesystem.repository.EmployeeRepository;
 import com.example.wagesystem.repository.ResignationRepository;
+import javassist.tools.rmi.ObjectNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -43,6 +43,15 @@ public class EmployeeServiceImpl implements EmployeeService, UserDetailsService 
     public EmployeeServiceImpl(EmployeeRepository employeeRepository, ResignationRepository resignationRepository) {
         this.employeeRepository = employeeRepository;
         this.resignationRepository = resignationRepository;
+    }
+
+    @Override
+    @Transactional
+    public void updateMonthWage(Long employeeId, BigDecimal monthWage) throws ObjectNotFoundException {
+        Employee employee = employeeRepository.findById(employeeId)
+                .orElseThrow(() -> new ObjectNotFoundException("해당하는 사원이 존재하지 않습니다."));
+        employee.setMonthWage(monthWage);
+        employeeRepository.save(employee);
     }
 
     @Override
@@ -92,6 +101,9 @@ public class EmployeeServiceImpl implements EmployeeService, UserDetailsService 
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         employeeInfoDto.setLoginPw(encoder.encode(employeeInfoDto.getLoginPw()));
         employeeInfoDto.setPosition(Position.STAFF);
+        employeeInfoDto.setHourWage(BigDecimal.valueOf(9620));
+        employeeInfoDto.setStartWeeklyAllowance(LocalDate.now());
+        employeeInfoDto.setStartWeeklyAllowance(LocalDate.now().plusDays(6));
 
         return employeeRepository.save(employeeInfoDto.toEntity()).getEmployeeId();
     }
@@ -143,26 +155,11 @@ public class EmployeeServiceImpl implements EmployeeService, UserDetailsService 
         Employee findMember = employeeRepository.findByLoginId(loginId)
                 .orElseThrow(() -> new LoginIdNotFoundException("해당하는 회원이 존재하지 않습니다"));
 
-        List<Attendance> payList = findMember.getPayList();
-
-        for (Attendance attendance : payList) {
-            // 초기화를 위해 모든 대리 연산을 수행해야 함
-            attendance.getAttendanceId();
-        }
-
-        BigDecimal monthWage = BigDecimal.ZERO;
-
-        for (int i = 0; i < findMember.getPayList().size(); i++) {
-            monthWage = monthWage.add(findMember.getPayList().get(i).getDailyWage());
-            if (findMember.getPayList().get(i).getDailyWage() != null) {
-                monthWage = monthWage.add(findMember.getPayList().get(i).getDailyWage());
-            }
-        }
 
         return MyPageDto.builder()
                 .name(findMember.getName())
                 .position(findMember.getPosition())
-                .pay(monthWage)
+                .pay(findMember.getMonthWage())
                 .hourWage(findMember.getHourwage())
                 .build();
     }

@@ -3,14 +3,14 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/wage?serverTime=Asia/Seoul
     username: root
-    password: cv93523827!!
+    password: Cv93523827!!
   mvc:
     hiddenmethod:
       filter:
         enabled: true
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: create
     properties:
       hibernate:
         format_sql: true

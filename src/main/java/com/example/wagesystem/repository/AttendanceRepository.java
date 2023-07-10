@@ -10,6 +10,7 @@ import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import org.springframework.data.repository.query.Param;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -24,4 +25,7 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Long>, Q
     BigDecimal findHourWageByEmployeeId(@Param("employeeId") Long employeeId);
 
     Page<Attendance> findAllByEmployee (Employee employee, Pageable pageable);
+
+    @Query("SELECT a FROM Attendance a JOIN a.employee e WHERE e.employeeId = :employeeId AND a.workDay >= e.startWeeklyAllowance AND a.workDay <= e.endWeeklyAllowance")
+    List<Attendance> findByEmployeeIdAndWorkDayBetweenStartAndEndWeeklyAllowance(@Param("employeeId") Long employeeId);
 }

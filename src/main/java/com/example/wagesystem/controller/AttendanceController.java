@@ -3,10 +3,13 @@ package com.example.wagesystem.controller;
 
 import com.example.wagesystem.domain.Attendance;
 import com.example.wagesystem.domain.Employee;
+import com.example.wagesystem.dto.WeeklyAllowanceResult;
 import com.example.wagesystem.dto.attendance.AttendanceInfoDto;
+import com.example.wagesystem.exeption.AttendanceException;
 import com.example.wagesystem.repository.AttendanceRepository;
 import com.example.wagesystem.repository.EmployeeRepository;
 import com.example.wagesystem.sservice.AttendanceServiceImpl;
+import com.example.wagesystem.sservice.EmployeeServiceImpl;
 import io.swagger.annotations.ApiOperation;
 import javassist.tools.rmi.ObjectNotFoundException;
 import lombok.extern.log4j.Log4j2;
@@ -18,7 +21,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.YearMonth;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,12 +35,14 @@ public class AttendanceController {
     private final EmployeeRepository employeeRepository;
     private final AttendanceServiceImpl attendanceService;
     private final AttendanceRepository attendanceRepository;
+    private final EmployeeServiceImpl employeeService;
 
     @Autowired
-    public AttendanceController(EmployeeRepository employeeRepository, AttendanceServiceImpl attendanceService, AttendanceRepository attendanceRepository) {
+    public AttendanceController(EmployeeRepository employeeRepository, AttendanceServiceImpl attendanceService, AttendanceRepository attendanceRepository, EmployeeServiceImpl employeeService) {
         this.employeeRepository = employeeRepository;
         this.attendanceService = attendanceService;
         this.attendanceRepository = attendanceRepository;
+        this.employeeService = employeeService;
     }
 
     @ApiOperation("근태기록 조회(attendanceId 기반")
@@ -78,7 +85,7 @@ public class AttendanceController {
         Employee employee = validateEmployee(employeeId); // 중복 코드 분리
 
         if (attendanceService.hasAttendanceToday(employeeId)) {
-            throw new ObjectNotFoundException("오늘 이미 출근 처리가 되어 있습니다.");
+            throw new AttendanceException("오늘 이미 출근 처리가 되어 있습니다.");
         }
 
         LocalDateTime startTime = LocalDateTime.now();
@@ -92,7 +99,6 @@ public class AttendanceController {
         attendanceInfoDto.setWorkDay(startTime.toLocalDate());
 
         attendanceService.createAttendance(attendanceInfoDto);
-        log.info("attendanceDto: {}", attendanceInfoDto);
         return ResponseEntity.noContent().build();
     }
 
@@ -108,37 +114,49 @@ public class AttendanceController {
             Attendance attendance = latestAttendance.get();
             if (attendance.getEndTime() == null) {
                 LocalDateTime endTime = LocalDateTime.now();
-                attendanceInfoDto.setAttendanceId(attendance.getAttendanceId());
-                attendanceInfoDto.setEndTime(endTime);
-                attendanceInfoDto.setStartTime(attendance.getStartTime());
-                attendanceInfoDto.setWorkTime(attendanceService.calculationWorkTime(attendance.getStartTime(), endTime));
+
+                attendanceInfoDto.setAttendanceId(attendance.getAttendanceId()); //주휴수당 계산 시작
+//                YearMonth currentMonth = YearMonth.from(endTime.toLocalDate());
+//                WeeklyAllowanceResult weeklyAllowanceResult = attendanceService.calculateMonthlyWeeklyAllowanceBasedOnHireDate(employeeId, currentMonth);
+//                BigDecimal incompleteWeekHours = weeklyAllowanceResult.getIncompleteWeekHours();
+//                employeeService.updateAllowance(employeeId, weeklyAllowanceResult.getTotalAllowance(), incompleteWeekHours); //주휴수당 계산 끝
+
+                attendanceInfoDto.setEndTime(endTime); // 퇴근 시간 입력
+                attendanceInfoDto.setStartTime(attendance.getStartTime()); //출근 시간 set
+                attendanceInfoDto.setWorkTime(attendanceService.calculationWorkTime(attendance.getStartTime(), endTime)); // 총 근무 시간 입력
+
                 attendanceInfoDto.setDailyWage(attendanceService.calculattionDailyWage(
                         attendanceService.calculationWorkTime(attendance.getStartTime(), endTime),
                         attendanceRepository.findHourWageByEmployeeId(employeeId)));
+
                 attendanceService.updateAttendance(attendance.getAttendanceId(), attendanceInfoDto);
-                log.info("attendanceDto: {}", attendanceInfoDto);
+
+                BigDecimal monthWage = attendanceService.calculateMonthWage(employeeId);
+                employeeService.updateMonthWage(employeeId, monthWage);
+
                 return ResponseEntity.noContent().build();
             } else {
-                throw new RuntimeException("이미 퇴근 처리된 출근 기록입니다.");
+                throw new AttendanceException("이미 퇴근 처리된 출근 기록입니다.");
             }
         } else {
-            throw new RuntimeException("해당 사원의 출근 기록이 없습니다.");
+            throw new AttendanceException("해당 사원의 출근 기록이 없습니다.");
         }
     }
 
+    //중복 코드 분리
     private Employee validateEmployee(Long employeeId) throws ObjectNotFoundException {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String loginId = authentication.getName();
         Optional<Employee> optionalEmployee = employeeRepository.findById(employeeId);
 
         if (!attendanceService.checkLoginEmployee(loginId, employeeId)) {
-            throw new ObjectNotFoundException("현재 로그인된 사용자의 사번이 아닙니다.");
+            throw new AttendanceException("현재 로그인된 사용자의 사번이 아닙니다.");
         }
         if (!optionalEmployee.isPresent()) {
-            throw new ObjectNotFoundException("Employee not found");
+            throw new AttendanceException("Employee not found");
         }
         if (!attendanceService.findAllEmployeeId(employeeId)) {
-            throw new ObjectNotFoundException("존재하지 않는 사번입니다.");
+            throw new AttendanceException("존재하지 않는 사번입니다.");
         }
         return optionalEmployee.get();
     }

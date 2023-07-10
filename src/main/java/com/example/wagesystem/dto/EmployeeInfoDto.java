@@ -3,6 +3,9 @@ package com.example.wagesystem.dto;
 import com.example.wagesystem.domain.Employee;
 import lombok.*;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
+
 @Getter
 @Setter
 @ToString
@@ -27,8 +30,13 @@ public class EmployeeInfoDto {
 
     private String birthday;
 
+    private BigDecimal hourWage;
+
+    private LocalDate startWeeklyAllowance;
+
+    private LocalDate endWeeklyAllowance;
     @Builder
-    public EmployeeInfoDto(Position position, String store, Long employeeId, String loginId, String loginPw, String name, String phoneNumber, String birthday, String EmPhoneNumber) {
+    public EmployeeInfoDto(Position position, String store, Long employeeId, String loginId, String loginPw, String name, String phoneNumber, String birthday, String EmPhoneNumber, BigDecimal hourWage, LocalDate startWeeklyAllowance, LocalDate endWeeklyAllowance) {
         this.employeeId = employeeId;
         this.loginId = loginId;
         this.loginPw = loginPw;
@@ -38,6 +46,9 @@ public class EmployeeInfoDto {
         this.EmPhoneNumber = EmPhoneNumber;
         this.store = store;
         this.position = position;
+        this.hourWage = hourWage;
+        this.startWeeklyAllowance = startWeeklyAllowance;
+        this.endWeeklyAllowance = endWeeklyAllowance;
     }
 
     public Employee toEntity() {
@@ -51,6 +62,9 @@ public class EmployeeInfoDto {
                 .EmPhoneNumber(EmPhoneNumber)
                 .store(store)
                 .position(position)
+                .hourwage(hourWage)
+                .startWeeklyAllowance(startWeeklyAllowance)
+                .endWeeklyAllowance(endWeeklyAllowance)
                 .build();
     }
 }

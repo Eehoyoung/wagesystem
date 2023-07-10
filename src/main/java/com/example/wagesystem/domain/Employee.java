@@ -8,6 +8,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -58,6 +59,16 @@ public class Employee extends BaseTimeEntity {
     @Column
     private BigDecimal monthWage;
 
+
+    @Column
+    private BigDecimal incompleteWeekAllowance;
+
+    @Column
+    private LocalDate startWeeklyAllowance;
+
+    @Column
+    private LocalDate endWeeklyAllowance;
+
     @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Attendance> payList = new ArrayList<>();
 
@@ -69,7 +80,7 @@ public class Employee extends BaseTimeEntity {
 
     @Builder
     public Employee(Long employeeId, String loginId, String name, String loginPw, String store, String phoneNumber, Position position
-            , Date resignationDate, String birthday, String EmPhoneNumber, BigDecimal hourwage) {
+            , Date resignationDate, String birthday, String EmPhoneNumber, BigDecimal hourwage, BigDecimal incompleteWeekAllowance, LocalDate startWeeklyAllowance, LocalDate endWeeklyAllowance) {
         this.employeeId = employeeId;
         this.loginId = loginId;
         this.name = name;
@@ -81,5 +92,8 @@ public class Employee extends BaseTimeEntity {
         this.birthday = birthday;
         this.EmPhoneNumber = EmPhoneNumber;
         this.hourwage = hourwage;
+        this.incompleteWeekAllowance = incompleteWeekAllowance;
+        this.startWeeklyAllowance = startWeeklyAllowance;
+        this.endWeeklyAllowance = endWeeklyAllowance;
     }
 }

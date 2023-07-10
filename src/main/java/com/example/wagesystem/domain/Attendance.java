@@ -42,10 +42,16 @@ public class Attendance {
     @Column
     private LocalDate workDay;
 
+    @Column
+    private BigDecimal weeklyAllowance;
+
+    @Column
+    private BigDecimal bonus;
+
 
     @Builder
     public Attendance(Long attendanceId, Employee employee, LocalDateTime startTime, LocalDateTime endTime, Time workTime,
-                      BigDecimal dailyWage, LocalDate workDay) {
+                      BigDecimal dailyWage, LocalDate workDay, BigDecimal weeklyAllowance, BigDecimal bonus) {
         this.attendanceId = attendanceId;
         this.employee = employee;
         this.startTime = startTime;
@@ -53,6 +59,8 @@ public class Attendance {
         this.workTime = workTime;
         this.dailyWage = dailyWage;
         this.workDay = workDay;
+        this.weeklyAllowance = weeklyAllowance;
+        this.bonus = bonus;
     }
 
     public void setEmployee(Employee employee) {

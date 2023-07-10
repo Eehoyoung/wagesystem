@@ -4,10 +4,12 @@ import com.example.wagesystem.domain.Employee;
 import com.example.wagesystem.dto.MyPageDto;
 import com.example.wagesystem.dto.ProfileDto;
 import com.example.wagesystem.dto.ResignationDto;
+import com.example.wagesystem.dto.WeeklyAllowanceResult;
 import com.example.wagesystem.dto.attendance.AttendancePageDto;
 import com.example.wagesystem.sservice.AttendanceServiceImpl;
 import com.example.wagesystem.sservice.EmployeeServiceImpl;
 import io.swagger.annotations.ApiOperation;
+import javassist.tools.rmi.ObjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -21,6 +23,7 @@ import javax.servlet.http.HttpSession;
 import java.math.BigDecimal;
 import java.security.Principal;
 import java.time.LocalDate;
+import java.time.YearMonth;
 
 @Controller
 public class MainController {
@@ -28,10 +31,14 @@ public class MainController {
     private final EmployeeServiceImpl employeeService;
 
     private final AttendanceServiceImpl attendanceServiceImpl;
+
+    private final AttendanceServiceImpl attendanceService;
+
     @Autowired
-    public MainController(EmployeeServiceImpl employeeService, AttendanceServiceImpl attendanceServiceImpl) {
+    public MainController(EmployeeServiceImpl employeeService, AttendanceServiceImpl attendanceServiceImpl, AttendanceServiceImpl attendanceService) {
         this.employeeService = employeeService;
         this.attendanceServiceImpl = attendanceServiceImpl;
+        this.attendanceService = attendanceService;
     }
 
     @ApiOperation("메인 페이지")
@@ -103,7 +110,7 @@ public class MainController {
     }
 
     @GetMapping("/main/wage")
-    public String getWagePage(Principal principal, Model model, @PageableDefault(size = 5) Pageable pageable){
+    public String getWagePage(Principal principal, Model model, @PageableDefault(size = 5) Pageable pageable) throws ObjectNotFoundException {
         String loginId = principal.getName();
         Employee findEmployee = employeeService.findEmployeeLoginID(loginId);
 
@@ -111,6 +118,7 @@ public class MainController {
         BigDecimal tax = findEmployee.getMonthWage().multiply(BigDecimal.valueOf(0.033));
 
         AttendancePageDto attendancePageDto = attendanceServiceImpl.getWagePagingDto(loginId,pageable);
+        YearMonth currentYearMonth = YearMonth.now();
 
         model.addAttribute("totalWage", totalWage);
         model.addAttribute("tax",tax);

@@ -22,6 +22,7 @@
   <div class="section_caption">
     MILEAGE
   </div>
+  <p data-ke-size="size16"> &emsp;</p>
   <div class="mileage_summary">
     <div class="mileage_summary_left">
       <div class="summary_item">
@@ -42,6 +43,7 @@
   </div>
   <div class="section_content">
     <div class="mileage_caption">
+      <p data-ke-size="size16"> &emsp;</p>
       <div >근무내역</div>
     </div>
     <div >
@@ -67,29 +69,51 @@
           </tr>
           </tbody>
         </table>
-
-        <!--검색결과가 있는 경우 없는 영역-->
-        <!--                    <div class="nosearch" th:if="${#lists.isEmpty(mileageList)}">-->
-        <!--                        적립내역이 없습니다.-->
-        <!--                    </div>-->
+        <p data-ke-size="size16"> &emsp;</p>
+        <div >추가 급여 내역</div>
+      </div>
+      <div >
+        <div class="wage_content">
+          <table>
+            <colgroup>
+              <col width="15%">
+              <col width="15%">
+              <col width="auto">
+            </colgroup>
+            <thead>
+            <tr>
+              <td>지급일</td>
+              <td>추가 급여</td>
+              <td>내용</td>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+              <td>주휴수당</td>
+              <td th:text="${#numbers.formatInteger(weeklyAllowanceInfo.totalAllowance, 0, 'COMMA')} + '원'">금액</td>
+              <td> </td>
+            </tr>
+            </tbody>
+          </table>
 
       </div>
       <ul class="pagenation">
         <li th:classappend="${1 == wageList.pageable.pageNumber + 1} ? 'disabled'">
-          <a href="#" class="prev bracket" th:href="@{/main/mileage(page=${wageList.pageable.pageNumber - 1})}" tabindex="-1" aria-disabled="true">
+          <a href="#" class="prev bracket" th:href="@{/main/wage(page=${wageList.pageable.pageNumber - 1})}" tabindex="-1" aria-disabled="true">
             <i class="fas fa-chevron-left"></i> PREV
           </a>
         </li>
         <li th:classappend="${i == wageList.pageable.pageNumber + 1} ? 'disabled'" th:each="i : ${#numbers.sequence(startPage, endPage)}">
-          <a href="#" class="pagenum" th:href="@{/main/mileage(page=${i - 1})}" th:text="${i}">1</a>
+          <a href="#" class="pagenum" th:href="@{/main/wage(page=${i - 1})}" th:text="${i}">1</a>
         </li>
         <li th:classappend="${wageList.totalPages == wageList.pageable.pageNumber + 1} ? 'disabled'">
-          <a href="#" class="next bracket" th:href="@{/main/mileage(page=${wageList.pageable.pageNumber + 1})}">
+          <a href="#" class="next bracket" th:href="@{/main/wage(page=${wageList.pageable.pageNumber + 1})}">
             NEXT <i class="fas fa-chevron-right"></i>
           </a>
         </li>
       </ul>
     </div>
+  </div>
   </div>
 </section>
 

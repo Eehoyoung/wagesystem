@@ -1,22 +1,66 @@
 <!DOCTYPE html>
-<html lang="en"
-      xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta content="IE=edge" http-equiv="X-UA-Compatible">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
-    <meta name="_csrf" th:content="${_csrf.token}"/>
-    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+    <meta name="_csrf" th:content="${_csrf.token}" />
+    <meta name="_csrf_header" th:content="${_csrf.headerName}" />
     <title>출 퇴근 기록</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-family: 'Noto Sans KR', sans-serif;
+        }
+
+        button {
+            background-color: #87cefa;
+            border: none;
+            color: white;
+            text-align: center;
+            font-size: 16px;
+            transition: 0.3s;
+            padding: 12px 24px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #74b9ff;
+        }
+
+        input {
+            padding: 8px 12px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            outline: none;
+            font-size: 16px;
+        }
+
+        h1 {
+            font-size: 32px;
+            margin-bottom: 16px;
+        }
+
+        .controls {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 24px;
+        }
+    </style>
 </head>
 <body>
 <header th:replace="~{main/header :: main_headerFragment}">
 </header>
 <div>
     <h1>출 퇴근 기록</h1>
-    <label for="employeeId"></label><input id="employeeId" placeholder="사번을 입력하세요" type="text">
-    <button id="btnStart">출근</button>
-    <button id="btnEnd">퇴근</button>
+    <div class="controls">
+        <label for="employeeId"></label><input id="employeeId" placeholder="사번을 입력하세요" type="text">
+        <button id="btnStart">출근</button>
+        <button id="btnEnd">퇴근</button>
+    </div>
 </div>
 
 <script crossorigin="anonymous" src="/js/jquery.js"></script>
@@ -40,8 +84,8 @@
                     success: function (response) {
                         alert("출근처리 완료");
                     },
-                    error: function (xhr, textStatus, errorThrown) {
-                        alert("출근 처리 실패");
+                    error: function (xhr) {
+                        alert(xhr.responseText);
                     }
                 });
             } else {
@@ -65,8 +109,8 @@
                     success: function (response) {
                         alert("퇴근 처리 완료, 오늘 하루도 고생 하셨습니다.")
                     },
-                    error: function (xhr, textStatus, errorThrown) {
-                        alert("퇴근 처리 실패")
+                    error: function (xhr) {
+                        alert(xhr.responseText);
                     }
                 });
             } else {

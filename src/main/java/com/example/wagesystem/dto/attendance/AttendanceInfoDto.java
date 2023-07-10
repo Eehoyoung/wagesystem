@@ -4,6 +4,7 @@ import com.example.wagesystem.domain.Attendance;
 import com.example.wagesystem.domain.Employee;
 import lombok.*;
 
+import javax.persistence.Column;
 import java.math.BigDecimal;
 import java.sql.Time;
 import java.time.LocalDate;
@@ -29,8 +30,12 @@ public class AttendanceInfoDto {
 
     private LocalDate workDay;
 
+    private BigDecimal weeklyAllowance;
+
+    private BigDecimal bonus;
+
     @Builder
-    public AttendanceInfoDto(Long attendanceId, Long employeeId, LocalDateTime startTime, LocalDateTime endTime, Time workTime, BigDecimal dailyWage, LocalDate workDay) {
+    public AttendanceInfoDto(Long attendanceId, Long employeeId, LocalDateTime startTime, LocalDateTime endTime, Time workTime, BigDecimal dailyWage, LocalDate workDay, BigDecimal weeklyAllowance, BigDecimal bonus) {
         this.attendanceId = attendanceId;
         this.employeeId = employeeId;
         this.startTime = startTime;
@@ -38,6 +43,8 @@ public class AttendanceInfoDto {
         this.workTime = workTime;
         this.dailyWage = dailyWage;
         this.workDay = workDay;
+        this.weeklyAllowance = weeklyAllowance;
+        this.bonus = bonus;
     }
 
     public Attendance toEntity(Employee employee) {
@@ -49,6 +56,8 @@ public class AttendanceInfoDto {
                 .workTime(workTime)
                 .dailyWage(dailyWage)
                 .workDay(workDay)
+                .weeklyAllowance(weeklyAllowance)
+                .bonus(bonus)
                 .build();
     }
 }
