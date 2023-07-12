@@ -1,4 +1,4 @@
-package com.example.wagesystem.exeption;
+package com.example.wagesystem.exception;
 
 public class LoginIdNotFoundException extends RuntimeException {
 

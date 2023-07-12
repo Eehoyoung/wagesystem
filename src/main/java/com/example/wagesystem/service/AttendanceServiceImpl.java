@@ -1,10 +1,10 @@
-package com.example.wagesystem.sservice;
+package com.example.wagesystem.service;
 
 import com.example.wagesystem.domain.Attendance;
 import com.example.wagesystem.domain.Employee;
 import com.example.wagesystem.dto.attendance.AttendanceInfoDto;
 import com.example.wagesystem.dto.attendance.AttendancePageDto;
-import com.example.wagesystem.exeption.LoginIdNotFoundException;
+import com.example.wagesystem.exception.LoginIdNotFoundException;
 import com.example.wagesystem.repository.AttendanceRepository;
 import com.example.wagesystem.repository.EmployeeRepository;
 import javassist.tools.rmi.ObjectNotFoundException;

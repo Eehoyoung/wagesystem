@@ -1,4 +1,4 @@
-package com.example.wagesystem.sservice;
+package com.example.wagesystem.service;
 
 
 import com.example.wagesystem.domain.Employee;

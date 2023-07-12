@@ -3,13 +3,12 @@ package com.example.wagesystem.controller;
 
 import com.example.wagesystem.domain.Attendance;
 import com.example.wagesystem.domain.Employee;
-import com.example.wagesystem.dto.WeeklyAllowanceResult;
 import com.example.wagesystem.dto.attendance.AttendanceInfoDto;
-import com.example.wagesystem.exeption.AttendanceException;
+import com.example.wagesystem.exception.AttendanceException;
 import com.example.wagesystem.repository.AttendanceRepository;
 import com.example.wagesystem.repository.EmployeeRepository;
-import com.example.wagesystem.sservice.AttendanceServiceImpl;
-import com.example.wagesystem.sservice.EmployeeServiceImpl;
+import com.example.wagesystem.service.AttendanceServiceImpl;
+import com.example.wagesystem.service.EmployeeServiceImpl;
 import io.swagger.annotations.ApiOperation;
 import javassist.tools.rmi.ObjectNotFoundException;
 import lombok.extern.log4j.Log4j2;
@@ -23,7 +22,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.time.YearMonth;
 import java.util.List;
 import java.util.Optional;
 

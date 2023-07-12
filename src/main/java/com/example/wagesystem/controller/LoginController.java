@@ -1,7 +1,7 @@
 package com.example.wagesystem.controller;
 
 import com.example.wagesystem.dto.EmployeeInfoDto;
-import com.example.wagesystem.sservice.EmployeeServiceImpl;
+import com.example.wagesystem.service.EmployeeServiceImpl;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
