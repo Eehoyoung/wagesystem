@@ -103,7 +103,7 @@ public class EmployeeServiceImpl implements EmployeeService, UserDetailsService 
         employeeInfoDto.setPosition(Position.STAFF);
         employeeInfoDto.setHourWage(BigDecimal.valueOf(9620));
         employeeInfoDto.setStartWeeklyAllowance(LocalDate.now());
-        employeeInfoDto.setStartWeeklyAllowance(LocalDate.now().plusDays(6));
+        employeeInfoDto.setEndWeeklyAllowance(LocalDate.now().plusDays(6));
 
         return employeeRepository.save(employeeInfoDto.toEntity()).getEmployeeId();
     }

@@ -10,6 +10,7 @@ import java.math.BigDecimal;
 import java.sql.Time;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 
 @Entity
 @Getter
@@ -66,5 +67,11 @@ public class Attendance {
     public void setEmployee(Employee employee) {
         this.employee = employee;
         employee.getPayList().add(this);
+    }
+
+    // 근무 시간 계산
+    public BigDecimal calculateWorkHours() {
+        long hours = ChronoUnit.HOURS.between(startTime, endTime) + ChronoUnit.MINUTES.between(startTime, endTime) / 60;
+        return BigDecimal.valueOf(hours);
     }
 }

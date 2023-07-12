@@ -21,7 +21,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.Time;
 import java.time.*;
-import java.time.temporal.ChronoUnit;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -215,73 +215,91 @@ public class AttendanceServiceImpl implements AttendanceService {
 
     }
 
+    // 주휴 수당을 계산하는 스케줄러
     @Scheduled(cron = "0 40 23 * * ?")
-    public void cal(){
-        Employee employee = new Employee();
-        LocalDate startDate = employeeRepository.findByStartWeeklyAllowance(employee.getEmployeeId()); //주휴수당 시작 요일
-        LocalDate endDate = employeeRepository.findByEndWeeklyAllowance(employee.getEmployeeId()); // 주휴수당 종료 요일
-        LocalDate now = LocalDate.now(); //스케줄러가 실행되는 현 시점
-        YearMonth yearMonth = YearMonth.from(startDate); // 주휴수당 시작 주의 연,월을 출력 yyyy-mm
-        LocalDate end = yearMonth.atEndOfMonth(); // 해당 연,월의 마지막 날을 출력 yyyy-mm-dd
+    public void calculateWeeklyAllowances() throws ObjectNotFoundException {
+        List<Employee> employees = employeeRepository.findAll();
 
-        if (endDate.isAfter(end)) { //주휴수당 종료 일이 다음달인 경우
-            endDate = end; // 주휴수당 종료일을 월말로 변경
+        //모든 사원을 조회
+        for (Employee employee : employees) {
+            calculateAndUpdateWeeklyAllowance(employee);
+            employeeRepository.save(employee);
         }
-        //주휴수당 종료일을 월말로 변경하여 해당월의 말일까지 발생한 주휴 수당을 전부 지급
+    }
 
-        if(endDate.isBefore(now)){
+    // 주휴 수당 계산 및 업데이트
+    private void calculateAndUpdateWeeklyAllowance(Employee employee) throws ObjectNotFoundException {
+        LocalDate startDate = employee.getStartWeeklyAllowance();
+        LocalDate endDate = employee.getEndWeeklyAllowance();
+        LocalDate now = LocalDate.now();
+        endDate = adjustEndDateBasedOnMonthAndNow(endDate, startDate, now);
+
+        List<Attendance> attendances = findAttendancesBetweenDates(employee);
+        BigDecimal weeklyHours = calculateWeeklyHours(attendances);
+
+        BigDecimal weeklyAllowance = employee.calculateWeeklyAllowance(weeklyHours);
+
+        if (isCarriedOverWeek(startDate, endDate, now)) {
+            employee.setIncompleteWeekAllowance(weeklyAllowance);
+        } else if (endDate.equals(now)) {
+            saveWeeklyAllowanceAndUpdateDates(employee, endDate, weeklyAllowance);
+        }
+    }
+
+    // 종료일을 현재 날짜와 기준 월에 따라 조정
+    private LocalDate adjustEndDateBasedOnMonthAndNow(LocalDate endDate, LocalDate startDate, LocalDate now) {
+        YearMonth yearMonth = YearMonth.from(startDate);
+        LocalDate endOfMonth = yearMonth.atEndOfMonth();
+
+        if (endDate.isAfter(endOfMonth)) {
+            endDate = endOfMonth;
+        } else if (endDate.isBefore(now)) {
             endDate = startDate.plusDays(6);
         }
-        //이월된 후 다음달 1일에 다시 원상복구
 
-        // 각 사원의 주휴수당 시작 일과 종료 일을 불러옴
-        List<Attendance> attendances = attendanceRepository.findByEmployeeIdAndWorkDayBetweenStartAndEndWeeklyAllowance(employee.getEmployeeId());
-
-        BigDecimal weeklyHours = attendances.stream()
-                .map(att -> {
-                    LocalTime startTime = LocalTime.from(att.getStartTime());
-                    LocalTime endTime = LocalTime.from(att.getEndTime());
-                    long hours = ChronoUnit.HOURS.between(startTime, endTime)
-                            + ChronoUnit.MINUTES.between(startTime, endTime) / 60;
-                    return BigDecimal.valueOf(hours);
-                })
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-
-        if(weeklyHours.compareTo(new BigDecimal(15)) >= 0){ // 1주 근무시간이 15시간 이상인 경우 주휴 수당 발생
-           BigDecimal weeklyAllowance = weeklyHours.multiply(employee.getHourwage()).multiply(BigDecimal.valueOf(0.2));
-           if(endDate.minusDays(6) != startDate && endDate.equals(now)){ // 이월주인 경우 선지급금을 제외하기 위해 저장
-               employee.setIncompleteWeekAllowance(weeklyAllowance);
-           }else{
-               try {
-                   if(endDate.equals(now)) { // 완전한 주인 경우
-                       Long attId = findLastAttendanceIdByEmployeeId(employee.getEmployeeId()); //마지막 근무를 불러옵니다.
-                       Attendance attendance = attendanceRepository.findById(attId)
-                               .orElseThrow(() -> new LoginIdNotFoundException("해당하는 근무기록이 존재하지 않습니다"));
-                       attendance.setWeeklyAllowance(weeklyAllowance);
-                       attendanceRepository.save(attendance);
-                   }
-               } catch (ObjectNotFoundException e) {
-                   throw new RuntimeException(e);
-               }
-           }
-        }
-        employeeRepository.save(employee);
-
+        return endDate;
     }
 
-    public Long findLastAttendanceIdByEmployeeId(Long employeeId) throws ObjectNotFoundException {
-        Employee employee = employeeRepository.findById(employeeId)
-                .orElseThrow(() -> new ObjectNotFoundException("해당하는 사원이 존재하지 않습니다."));
+    // 시작일과 종료일 사이의 출석 데이터를 찾음
+    private List<Attendance> findAttendancesBetweenDates(Employee employee) {
+        return attendanceRepository.findByEmployeeIdAndWorkDayBetweenStartAndEndWeeklyAllowance(employee.getEmployeeId());
+    }
 
-        if (employee != null) {
-            List<Attendance> attendances = employee.getPayList();
+    // 한 주간 근무 시간 계산
+    private BigDecimal calculateWeeklyHours(List<Attendance> attendances) {
+        return attendances.stream()
+                .map(Attendance::calculateWorkHours)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
 
-            return attendances.stream()
-                    .mapToLong(Attendance::getAttendanceId)
-                    .max()
-                    .orElse(-1); // orElse()의 인자는 검색이 실패한 경우 반환할 사용자 지정 값입니다. 여기서 -1은 실패를 나타냅니다.
-        } else {
-            return (long) -1; // orElse()와 동일한 실패 값을 반환합니다.
-        }
+    // 이어지는 주인지 확인
+    private boolean isCarriedOverWeek(LocalDate startDate, LocalDate endDate, LocalDate now) {
+        return endDate.minusDays(6) != startDate && endDate.equals(now);
+    }
+
+    // 주휴 수당 저장 및 기간 업데이트
+    private void saveWeeklyAllowanceAndUpdateDates(Employee employee, LocalDate endDate, BigDecimal weeklyAllowance) throws ObjectNotFoundException {
+        Attendance lastAttendance = findLastAttendanceByEmployeeId(employee.getEmployeeId());
+        lastAttendance.setWeeklyAllowance(weeklyAllowance);
+        attendanceRepository.save(lastAttendance);
+
+        employee.setStartWeeklyAllowance(endDate.plusDays(1));
+        employee.setEndWeeklyAllowance(endDate.plusDays(7));
+    }
+
+    // 직원 ID로 마지막 근무 정보 검색
+    private Attendance findLastAttendanceByEmployeeId(Long employeeId) throws ObjectNotFoundException {
+        Employee employee = findEmployeeById(employeeId);
+        List<Attendance> attendances = employee.getPayList();
+
+        return attendances.stream()
+                .max(Comparator.comparingLong(Attendance::getAttendanceId))
+                .orElseThrow(() -> new ObjectNotFoundException("해당하는 근무기록이 존재하지 않습니다."));
+    }
+
+    // 직원 ID로 직원 검색
+    private Employee findEmployeeById(Long employeeId) throws ObjectNotFoundException {
+        return employeeRepository.findById(employeeId).orElseThrow(() -> new ObjectNotFoundException("해당하는 사원이 존재하지 않습니다."));
     }
 }
+

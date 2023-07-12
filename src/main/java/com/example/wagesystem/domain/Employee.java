@@ -96,4 +96,13 @@ public class Employee extends BaseTimeEntity {
         this.startWeeklyAllowance = startWeeklyAllowance;
         this.endWeeklyAllowance = endWeeklyAllowance;
     }
+
+    public BigDecimal calculateWeeklyAllowance(BigDecimal weeklyHours) {
+        if (weeklyHours.compareTo(new BigDecimal(15)) >= 0) {
+            return weeklyHours.multiply(this.getHourwage()).multiply(BigDecimal.valueOf(0.2));
+        } else {
+            return BigDecimal.ZERO;
+        }
+    }
+
 }
