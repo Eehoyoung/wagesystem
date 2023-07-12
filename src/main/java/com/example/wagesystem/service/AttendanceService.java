@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 
 import java.math.BigDecimal;
 import java.sql.Time;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -17,9 +18,11 @@ public interface AttendanceService {
 
     AttendancePageDto getWagePagingDto(String loginId, Pageable pageable);
 
-    BigDecimal calculattionDailyWage(Time workTime, BigDecimal hourWage);
+    BigDecimal calculattionDailyWage(Duration workTime, BigDecimal hourWage);
 
-    Time calculationWorkTime(LocalDateTime startTime, LocalDateTime endTime);
+    Time calculationSetWorkTime(LocalDateTime startTime, LocalDateTime endTime);
+
+    Duration calculationWorkTime(LocalDateTime startTime, LocalDateTime endTime);
 
     boolean findAllEmployeeId(Long employeeId);
 

@@ -74,8 +74,7 @@ public class AttendanceController {
 
     @ApiOperation("출근")
     @PostMapping("/start/{employeeId}")
-    public ResponseEntity<Void> startAttendance(@PathVariable Long employeeId)
-            throws ObjectNotFoundException {
+    public ResponseEntity<Void> startAttendance(@PathVariable Long employeeId) {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String loginId = authentication.getName();
@@ -113,15 +112,11 @@ public class AttendanceController {
             if (attendance.getEndTime() == null) {
                 LocalDateTime endTime = LocalDateTime.now();
 
-                attendanceInfoDto.setAttendanceId(attendance.getAttendanceId()); //주휴수당 계산 시작
-//                YearMonth currentMonth = YearMonth.from(endTime.toLocalDate());
-//                WeeklyAllowanceResult weeklyAllowanceResult = attendanceService.calculateMonthlyWeeklyAllowanceBasedOnHireDate(employeeId, currentMonth);
-//                BigDecimal incompleteWeekHours = weeklyAllowanceResult.getIncompleteWeekHours();
-//                employeeService.updateAllowance(employeeId, weeklyAllowanceResult.getTotalAllowance(), incompleteWeekHours); //주휴수당 계산 끝
+                attendanceInfoDto.setAttendanceId(attendance.getAttendanceId());
 
                 attendanceInfoDto.setEndTime(endTime); // 퇴근 시간 입력
                 attendanceInfoDto.setStartTime(attendance.getStartTime()); //출근 시간 set
-                attendanceInfoDto.setWorkTime(attendanceService.calculationWorkTime(attendance.getStartTime(), endTime)); // 총 근무 시간 입력
+                attendanceInfoDto.setWorkTime(attendanceService.calculationSetWorkTime(attendance.getStartTime(), endTime)); // 총 근무 시간 입력
 
                 attendanceInfoDto.setDailyWage(attendanceService.calculattionDailyWage(
                         attendanceService.calculationWorkTime(attendance.getStartTime(), endTime),
@@ -142,7 +137,7 @@ public class AttendanceController {
     }
 
     //중복 코드 분리
-    private Employee validateEmployee(Long employeeId) throws ObjectNotFoundException {
+    private Employee validateEmployee(Long employeeId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String loginId = authentication.getName();
         Optional<Employee> optionalEmployee = employeeRepository.findById(employeeId);

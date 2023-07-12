@@ -61,15 +61,40 @@ public class AttendanceServiceImpl implements AttendanceService {
 
     @Transactional
     @Override
-    public BigDecimal calculattionDailyWage(Time workTime, BigDecimal hourWage) {
-        BigDecimal minHour = BigDecimal.valueOf(workTime.getMinutes()).divide(BigDecimal.valueOf(60), 2, RoundingMode.HALF_UP);
-        BigDecimal hour = BigDecimal.valueOf(workTime.getHours()).add(minHour);
-        return hourWage.multiply(hour);
+    public BigDecimal calculattionDailyWage(Duration workTime, BigDecimal hourWage) {
+        BigDecimal dailyWage = BigDecimal.ZERO;
+        int overtimeThreshold = 8 * 60; // 8시간,480분 (8 시간 * 60 분)
+
+        // 원래 시간에 대한 계산
+        int regularTime = 0;
+        if (workTime.toMinutes() >= overtimeThreshold) {
+            regularTime = overtimeThreshold;
+        } else {
+            regularTime = (int) workTime.toMinutes();
+        }
+
+        dailyWage = dailyWage.add(hourWage.multiply(BigDecimal.valueOf(regularTime)).divide(BigDecimal.valueOf(60), RoundingMode.HALF_UP));
+
+        // 초과 근무에 대한 계산
+        if (workTime.toMinutes() > overtimeThreshold) {
+            int extraTime = (int) workTime.toMinutes() - overtimeThreshold;
+            BigDecimal extraWage = hourWage.multiply(new BigDecimal("1.5"));
+            dailyWage = dailyWage.add(extraWage.multiply(BigDecimal.valueOf(extraTime)).divide(BigDecimal.valueOf(60), RoundingMode.HALF_UP));
+        }
+
+        return dailyWage;
     }
 
     @Transactional
     @Override
-    public Time calculationWorkTime(LocalDateTime startTime, LocalDateTime endTime) {
+    public Duration calculationWorkTime(LocalDateTime startTime, LocalDateTime endTime) {
+
+        return Duration.between(startTime, endTime);
+    }
+
+    @Transactional
+    @Override
+    public Time calculationSetWorkTime(LocalDateTime startTime, LocalDateTime endTime) {
 
         Duration duration = Duration.between(startTime, endTime);
 
@@ -77,9 +102,10 @@ public class AttendanceServiceImpl implements AttendanceService {
         long hours = duration.toHours();
         long minutes = duration.toMinutes() % 60;
 
+        LocalTime totalTime = LocalTime.of((int) hours, (int) minutes);
 
-        return Time.valueOf(LocalTime.of((int) hours, (int) minutes));
-
+        // LocalTime 객체를 Time 타입으로 변환
+        return Time.valueOf(totalTime);
     }
 
     @Override
