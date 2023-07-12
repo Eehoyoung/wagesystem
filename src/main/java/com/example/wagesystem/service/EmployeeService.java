@@ -13,7 +13,7 @@ import java.math.BigDecimal;
 public interface EmployeeService {
 
 
-    void updateMonthWage(Long employeeId, BigDecimal monthWage) throws ObjectNotFoundException;
+    void updateMonthWage(Long employeeId, EmployeeInfoDto employeeInfoDto) throws ObjectNotFoundException;
 
     Long tempEmployeeResignation(ResignationDto resignationDto);
 

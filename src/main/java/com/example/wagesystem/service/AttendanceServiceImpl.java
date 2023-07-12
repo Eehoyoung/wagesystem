@@ -214,31 +214,38 @@ public class AttendanceServiceImpl implements AttendanceService {
     @Transactional
     @Override
     public BigDecimal calculateMonthWage(Long employeeId) {
-
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String loginId = authentication.getName();
-
-        Employee findMember = employeeRepository.findByLoginId(loginId)
+        // 1. 사원 정보 찾기
+        Employee findMember = employeeRepository.findById(employeeId)
                 .orElseThrow(() -> new LoginIdNotFoundException("해당하는 회원이 존재하지 않습니다"));
 
+        // 2. 사원의 payList 가져오기
         List<Attendance> payList = findMember.getPayList();
 
-        for (Attendance attendance : payList) {
-            // 초기화를 위해 모든 대리 연산을 수행해야 함
-            attendance.getAttendanceId();
-        }
-
+        // 3. 월급 계산하기 위한 변수 초기화
         BigDecimal monthWage = BigDecimal.ZERO;
 
-        for (int i = 0; i < findMember.getPayList().size(); i++) {
-            monthWage = monthWage.add(findMember.getPayList().get(i).getDailyWage());
-            if (findMember.getPayList().get(i).getDailyWage() == null) {
-                monthWage = monthWage.add(findMember.getPayList().get(i).getDailyWage());
+        // 4. payList를 반복하며 dailyWage와 weeklyAllowance를 합산
+        for (Attendance attendance : payList) {
+            BigDecimal dailyWage = attendance.getDailyWage();
+            BigDecimal weeklyAllowance = attendance.getWeeklyAllowance();
+
+            if (dailyWage != null) {
+                monthWage = monthWage.add(dailyWage);
+            }
+
+            if (weeklyAllowance != null) {
+                monthWage = monthWage.add(weeklyAllowance);
             }
         }
 
-        return monthWage.subtract(findMember.getIncompleteWeekAllowance());
+        // 5. IncompleteWeekAllowance이 0이 아니면 월급에서 차감하여 반환
+        BigDecimal incompleteWeekAllowance = findMember.getIncompleteWeekAllowance();
+        if (incompleteWeekAllowance != null && !Objects.equals(incompleteWeekAllowance, BigDecimal.ZERO)) {
+            return monthWage.subtract(incompleteWeekAllowance);
+        }
 
+        // 6. 최종 월급 반환
+        return monthWage;
     }
 
     // 주휴 수당을 계산하는 스케줄러

@@ -47,10 +47,10 @@ public class EmployeeServiceImpl implements EmployeeService, UserDetailsService 
 
     @Override
     @Transactional
-    public void updateMonthWage(Long employeeId, BigDecimal monthWage) throws ObjectNotFoundException {
+    public void updateMonthWage(Long employeeId, EmployeeInfoDto employeeInfoDto) throws ObjectNotFoundException {
         Employee employee = employeeRepository.findById(employeeId)
                 .orElseThrow(() -> new ObjectNotFoundException("해당하는 사원이 존재하지 않습니다."));
-        employee.setMonthWage(monthWage);
+        employee.setMonthWage(employeeInfoDto.getMonthWage());
         employeeRepository.save(employee);
     }
 
@@ -104,6 +104,7 @@ public class EmployeeServiceImpl implements EmployeeService, UserDetailsService 
         employeeInfoDto.setHourWage(BigDecimal.valueOf(9620));
         employeeInfoDto.setStartWeeklyAllowance(LocalDate.now());
         employeeInfoDto.setEndWeeklyAllowance(LocalDate.now().plusDays(6));
+        employeeInfoDto.setMonthWage(BigDecimal.ZERO);
 
         return employeeRepository.save(employeeInfoDto.toEntity()).getEmployeeId();
     }

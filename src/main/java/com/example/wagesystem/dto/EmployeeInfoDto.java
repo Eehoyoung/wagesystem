@@ -35,8 +35,10 @@ public class EmployeeInfoDto {
     private LocalDate startWeeklyAllowance;
 
     private LocalDate endWeeklyAllowance;
+
+    private BigDecimal monthWage;
     @Builder
-    public EmployeeInfoDto(Position position, String store, Long employeeId, String loginId, String loginPw, String name, String phoneNumber, String birthday, String EmPhoneNumber, BigDecimal hourWage, LocalDate startWeeklyAllowance, LocalDate endWeeklyAllowance) {
+    public EmployeeInfoDto(Position position, String store, Long employeeId, String loginId, String loginPw, String name, String phoneNumber, String birthday, String EmPhoneNumber, BigDecimal hourWage, LocalDate startWeeklyAllowance, LocalDate endWeeklyAllowance, BigDecimal monthWage) {
         this.employeeId = employeeId;
         this.loginId = loginId;
         this.loginPw = loginPw;
@@ -49,6 +51,7 @@ public class EmployeeInfoDto {
         this.hourWage = hourWage;
         this.startWeeklyAllowance = startWeeklyAllowance;
         this.endWeeklyAllowance = endWeeklyAllowance;
+        this.monthWage = monthWage;
     }
 
     public Employee toEntity() {
@@ -65,6 +68,7 @@ public class EmployeeInfoDto {
                 .hourwage(hourWage)
                 .startWeeklyAllowance(startWeeklyAllowance)
                 .endWeeklyAllowance(endWeeklyAllowance)
+                .monthWage(monthWage)
                 .build();
     }
 }

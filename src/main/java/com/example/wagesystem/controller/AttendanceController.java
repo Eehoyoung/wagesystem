@@ -3,6 +3,7 @@ package com.example.wagesystem.controller;
 
 import com.example.wagesystem.domain.Attendance;
 import com.example.wagesystem.domain.Employee;
+import com.example.wagesystem.dto.EmployeeInfoDto;
 import com.example.wagesystem.dto.attendance.AttendanceInfoDto;
 import com.example.wagesystem.exception.AttendanceException;
 import com.example.wagesystem.repository.AttendanceRepository;
@@ -101,9 +102,8 @@ public class AttendanceController {
 
     @ApiOperation("퇴근")
     @PostMapping("/end/{employeeId}")
-    public ResponseEntity<Void> endAttendance(@PathVariable Long employeeId, AttendanceInfoDto attendanceInfoDto)
+    public ResponseEntity<Void> endAttendance(@PathVariable Long employeeId, AttendanceInfoDto attendanceInfoDto, EmployeeInfoDto employeeInfoDto)
             throws ObjectNotFoundException {
-
         Employee employee = validateEmployee(employeeId);
 
         Optional<Attendance> latestAttendance = attendanceService.getLatestAttendanceByEmployeeId(employeeId);
@@ -125,8 +125,8 @@ public class AttendanceController {
                 attendanceService.updateAttendance(attendance.getAttendanceId(), attendanceInfoDto);
 
                 BigDecimal monthWage = attendanceService.calculateMonthWage(employeeId);
-                employeeService.updateMonthWage(employeeId, monthWage);
-
+                employeeInfoDto.setMonthWage(monthWage);
+                employeeService.updateMonthWage(employeeId, employeeInfoDto);
                 return ResponseEntity.noContent().build();
             } else {
                 throw new AttendanceException("이미 퇴근 처리된 출근 기록입니다.");
