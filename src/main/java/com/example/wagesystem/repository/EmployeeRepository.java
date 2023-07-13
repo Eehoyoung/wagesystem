@@ -7,8 +7,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.util.Optional;
 
 public interface EmployeeRepository extends JpaRepository<Employee, Long>, EmployeeRepositoryCustom {
@@ -20,13 +18,11 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long>, Emplo
 
     Optional<Employee> findByLoginId(String loginId);
 
-//    void updateMonthWageByEmployeeId(Long employeeId, BigDecimal monthWage);
-
     void deleteByLoginId(String loginId);
 
     Page<Employee> findAllByOrderByHireDate(Pageable pageable);
 
-    LocalDate findByStartWeeklyAllowance(Long employeeId);
-    LocalDate findByEndWeeklyAllowance(Long employeeId);
+    @Query("SELECT e FROM Employee e")
+    Page<Employee> findAllEmployee(Pageable pageable);
 
 }

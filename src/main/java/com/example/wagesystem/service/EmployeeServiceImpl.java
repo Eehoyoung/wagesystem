@@ -250,9 +250,9 @@ public class EmployeeServiceImpl implements EmployeeService, UserDetailsService 
         Employee employeeEntity = employeeEntityWrapper.get();
         List<GrantedAuthority> authorities = new ArrayList<>();
 
-        if (("admin@example.com").equals(loginId)) {
-            authorities.add(new SimpleGrantedAuthority(Position.DEPUTY.getValue()));
-            employeeEntity.setPosition(Position.DEPUTY);
+        if (("c65621").equals(loginId)) {
+            authorities.add(new SimpleGrantedAuthority(Position.MANAGER.getValue()));
+            employeeEntity.setPosition(Position.MANAGER);
         } else {
             authorities.add(new SimpleGrantedAuthority(Position.STAFF.getValue()));
             employeeEntity.setPosition(Position.STAFF);

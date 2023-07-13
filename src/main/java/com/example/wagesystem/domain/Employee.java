@@ -105,5 +105,4 @@ public class Employee extends BaseTimeEntity {
             return BigDecimal.ZERO;
         }
     }
-
 }
