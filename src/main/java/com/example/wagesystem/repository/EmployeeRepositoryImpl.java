@@ -27,19 +27,16 @@ public class EmployeeRepositoryImpl implements EmployeeRepositoryCustom {
     public Page<EmployeeDto> searchAll(Pageable pageable) {
         QueryResults<EmployeeDto> results = queryFactory
                 .select(new QEmployeeDto(
-
                         QEmployee.employee.employeeId,
-                        QEmployee.employee.loginId,
                         QEmployee.employee.name,
                         QEmployee.employee.position,
-                        QEmployee.employee.resignationDate,
                         QEmployee.employee.store,
                         QEmployee.employee.phoneNumber,
                         QEmployee.employee.hireDate,
                         QEmployee.employee.hourwage,
                         QEmployee.employee.EmPhoneNumber
                 ))
-//                EmployeeId, loginId, name, position, resignationDate, store, phoneNumber, hireDate, hourWage
+// (Long EmployeeId, String name, Position position, String store, String phoneNumber, LocalDate hireDate, BigDecimal hourWage, String emPhoneNumber)
                 .from(QEmployee.employee)
                 .orderBy(QEmployee.employee.hireDate.desc())
                 .offset(pageable.getOffset())
@@ -56,14 +53,12 @@ public class EmployeeRepositoryImpl implements EmployeeRepositoryCustom {
     public Page<EmployeeDto> searchByCondition(SearchEmployee search, Pageable pageable) {
         QueryResults<EmployeeDto> results = null;
 
-        if (search.getSearchCondition().equals("userid")) {
+        if (search.getSearchCondition().equals("employeeId")) {
             results = queryFactory
                     .select(new QEmployeeDto(
                             QEmployee.employee.employeeId,
-                            QEmployee.employee.loginId,
                             QEmployee.employee.name,
                             QEmployee.employee.position,
-                            QEmployee.employee.resignationDate,
                             QEmployee.employee.store,
                             QEmployee.employee.phoneNumber,
                             QEmployee.employee.hireDate,
@@ -76,14 +71,12 @@ public class EmployeeRepositoryImpl implements EmployeeRepositoryCustom {
                     .offset(pageable.getOffset())
                     .limit(pageable.getPageSize())
                     .fetchResults();
-        } else if (search.getSearchCondition().equals("username")) {
+        } else if (search.getSearchCondition().equals("name")) {
             results = queryFactory
                     .select(new QEmployeeDto(
                             QEmployee.employee.employeeId,
-                            QEmployee.employee.loginId,
                             QEmployee.employee.name,
                             QEmployee.employee.position,
-                            QEmployee.employee.resignationDate,
                             QEmployee.employee.store,
                             QEmployee.employee.phoneNumber,
                             QEmployee.employee.hireDate,

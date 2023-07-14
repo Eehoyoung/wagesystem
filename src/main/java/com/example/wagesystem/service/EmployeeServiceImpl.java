@@ -214,35 +214,6 @@ public class EmployeeServiceImpl implements EmployeeService, UserDetailsService 
         return employeeRepository.findAllByOrderByHireDate(pageable);
     }
 
-    @Override
-    public EmployeePageDto findAllEmployePaging(Pageable pageable) {
-        EmployeePageDto employeePageDto = new EmployeePageDto();
-        Page<EmployeeDto> employeeBoards = employeeRepository.searchAll(pageable);
-        int startPage = Math.max(1, employeeBoards.getPageable().getPageNumber());
-        int endPage = Math.min(employeeBoards.getTotalPages(), employeeBoards.getPageable().getPageNumber() + 5);
-
-        employeePageDto.setEmployeeBoards(employeeBoards);
-        employeePageDto.setStartPage(startPage);
-        employeePageDto.setEndPage(endPage);
-
-        return employeePageDto;
-    }
-
-    @Override
-    public EmployeePageDto findAllEmployeeByConditionByPaging(SearchEmployee searchEmployee, Pageable pageable) {
-        EmployeePageDto employeePageDto = new EmployeePageDto();
-        Page<EmployeeDto> employeeBoards = employeeRepository.searchByCondition(searchEmployee, pageable);
-
-        int startPage = Math.max(1, employeeBoards.getPageable().getPageNumber() - 2);
-        int endPage = Math.min(employeeBoards.getTotalPages(), startPage + 4);
-
-        employeePageDto.setEmployeeBoards(employeeBoards);
-        employeePageDto.setStartPage(startPage);
-        employeePageDto.setEndPage(endPage);
-
-        return employeePageDto;
-    }
-
     @Transactional
     @Override
     public UserDetails loadUserByUsername(String loginId) throws UsernameNotFoundException {

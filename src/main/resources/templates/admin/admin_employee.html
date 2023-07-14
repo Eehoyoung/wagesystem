@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin User</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" href="/css/admin/user.css">
+    <script src="/js/jquery.js"></script>
+</head>
+<body>
+<nav th:replace="admin/admin_nav :: navFragment"></nav>
+<section>
+    <div class="item">
+        <div class="item-caption">
+            <div class="item-title">사원 기본 정보</div>
+        </div>
+        <div class="item-content">
+            <table>
+                <colgroup>
+                    <col width="15%"/>
+                    <col width="85%"/>
+                </colgroup>
+                <tr>
+                    <th>사원번호</th>
+                    <td th:text="${employee.employeeId}">1</td>
+                </tr>
+                <tr>
+                    <th>이름</th>
+                    <td th:text="${employee.name}">홍길동</td>
+                </tr>
+                <tr>
+                    <th>생년월일</th>
+                    <td th:text="${employee.birthday}">1994-04-06</td>
+                </tr>
+                <tr>
+                    <th>입사일</th>
+                    <td th:text="${employee.hireDate}">남자</td>
+                </tr>
+                <tr>
+                    <th>휴대전화</th>
+                    <td th:text="${#strings.replace(employee.phoneNumber, ',', '-')}">010-1234-5678</td>
+                </tr>
+                <tr>
+                    <th>긴급전화</th>
+                    <td th:text="${#strings.replace(employee.emPhoneNumber, ',', '-')}">02-1234-5678</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div class="bottom">
+        <div class="bottombtn">
+            <input type="button" value="뒤로가기" onclick="history.back()">
+        </div>
+    </div>
+</section>
+<script src="/js/admin/admin_nav.js"></script>
+</body>
+</html>

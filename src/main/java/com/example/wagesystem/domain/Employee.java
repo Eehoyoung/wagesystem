@@ -47,9 +47,6 @@ public class Employee extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private Position position;
 
-    @Column
-    private Date resignationDate;
-
     @Column(nullable = false)
     private String birthday;
 
@@ -58,7 +55,6 @@ public class Employee extends BaseTimeEntity {
 
     @Column
     private BigDecimal monthWage;
-
 
     @Column
     private BigDecimal incompleteWeekAllowance;
@@ -80,7 +76,7 @@ public class Employee extends BaseTimeEntity {
 
     @Builder
     public Employee(Long employeeId, String loginId, String name, String loginPw, String store, String phoneNumber, Position position
-            , Date resignationDate, String birthday, String EmPhoneNumber, BigDecimal hourwage, BigDecimal incompleteWeekAllowance, LocalDate startWeeklyAllowance, LocalDate endWeeklyAllowance, BigDecimal monthWage) {
+            , String birthday, String EmPhoneNumber, BigDecimal hourwage, BigDecimal incompleteWeekAllowance, LocalDate startWeeklyAllowance, LocalDate endWeeklyAllowance, BigDecimal monthWage) {
         this.employeeId = employeeId;
         this.loginId = loginId;
         this.name = name;
@@ -88,7 +84,6 @@ public class Employee extends BaseTimeEntity {
         this.store = store;
         this.phoneNumber = phoneNumber;
         this.position = position;
-        this.resignationDate = resignationDate;
         this.birthday = birthday;
         this.EmPhoneNumber = EmPhoneNumber;
         this.hourwage = hourwage;

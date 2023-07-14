@@ -16,8 +16,6 @@ public class EmployeeDto {
 
     private Long EmployeeId;
 
-    private String loginId;
-
     private String name;
 
     private Position position;
@@ -28,31 +26,21 @@ public class EmployeeDto {
 
     private LocalDate hireDate;
 
-    private Date resignationDate;
-
     private String store;
 
     private BigDecimal hourWage;
 
-    private LocalDate startWeeklyAllowance;
-
-    private LocalDate endWeeklyAllowance;
-
     @QueryProjection
-    public EmployeeDto(Long EmployeeId, String loginId, String name, Position position, Date resignationDate, String store, String phoneNumber
-            , LocalDate hireDate, BigDecimal hourWage, String emPhoneNumber, LocalDate startWeeklyAllowance, LocalDate endWeeklyAllowance) {
+    public EmployeeDto(Long EmployeeId, String name, Position position, String store, String phoneNumber
+            , LocalDate hireDate, BigDecimal hourWage, String emPhoneNumber) {
         this.EmployeeId = EmployeeId;
-        this.loginId = loginId;
         this.name = name;
         this.position = position;
-        this.resignationDate = resignationDate;
         this.store = store;
         this.phoneNumber = phoneNumber;
         this.emPhoneNumber = emPhoneNumber;
         this.hourWage = hourWage;
         this.hireDate = hireDate;
-        this.startWeeklyAllowance = startWeeklyAllowance;
-        this.endWeeklyAllowance = endWeeklyAllowance;
     }
 
 }

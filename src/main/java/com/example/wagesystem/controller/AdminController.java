@@ -2,7 +2,10 @@ package com.example.wagesystem.controller;
 
 import com.example.wagesystem.domain.Attendance;
 import com.example.wagesystem.domain.Employee;
+import com.example.wagesystem.domain.SearchEmployee;
 import com.example.wagesystem.dto.DailyWageDto;
+import com.example.wagesystem.dto.EmployeeDto;
+import com.example.wagesystem.dto.EmployeePageDto;
 import com.example.wagesystem.service.AdminServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -42,5 +45,34 @@ public class AdminController {
         return "admin/admin_main";
     }
 
+    @GetMapping("/admin/empList")
+    public String empList(Model model, @PageableDefault(size = 9) Pageable pageable, SearchEmployee searchEmployee){
+        EmployeePageDto employeePageDto = new EmployeePageDto();
+
+        if (searchEmployee.getSearchKeyWord() == null) {
+            employeePageDto = adminService.findAllEmployeeByPaging(pageable);
+        } else {
+            employeePageDto = adminService.findAllEmployeeByConditionByPaging(searchEmployee, pageable);
+        }
+
+        int homeStartPage = employeePageDto.getStartPage();
+        int homeEndPage = employeePageDto.getEndPage();
+        Page<EmployeeDto> employeeBoards = employeePageDto.getEmployeeBoards();
+
+        model.addAttribute("startPage", homeStartPage);
+        model.addAttribute("endPage", homeEndPage);
+        model.addAttribute("empList", employeeBoards);
+        model.addAttribute("searchCondition", searchEmployee.getSearchCondition());
+        model.addAttribute("searchKeyword", searchEmployee.getSearchKeyWord());
+
+        return "admin/admin_empList";
+    }
+
+    @GetMapping("/admin/userList/user/{id}")
+    public String pageUser(@PathVariable Long id, Model model) {
+        model.addAttribute("employee", adminService.findEmployeeById(id));
+
+        return "admin/admin_employee";
+    }
 }
 

@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>사원 조회</title>
+  <style>
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin-bottom: 1rem;
+    }
+
+    th, td {
+      text-align: center;
+      padding: 0.5rem;
+      border: 1px solid #ddd;
+    }
+
+    th {
+      background-color: #f2f2f2;
+    }
+
+    input[type="text"] {
+      padding: 0.5rem;
+      margin-right: 0.5rem;
+      border-radius:5px;
+      border: none;
+      border: 1px solid #ddd;
+      outline: none;
+    }
+
+    input[type="submit"] {
+      background-color: #4CAF50;
+      color: white;
+      padding: 0.5rem 1.5rem;
+      border-radius: 5px;
+      border: none;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+<nav th:replace="admin/admin_nav :: navFragment"></nav>
+<h1>사원 조회</h1>
+  <form class= "search-form" id="search-form" method="GET" th:action="@{/admin/empList}">
+    <label for="search-form">검색 조건:</label>
+    <label>
+      <select name="searchCondition" class="search-mode search-item" form="search-form">
+      <option value="name">이름</option>
+      <option value="employeeId">사원 번호</option>
+      </select>
+    </label>
+    <input type="text" name="searchKeyWord" class="search-input search-item">
+    <input type="submit" class="search-submit search-item" value="검색">
+</form>
+<table>
+  <thead>
+  <tr>
+    <th>이름(사번)</th>
+    <th>전화번호</th>
+    <th>긴급전화번호</th>
+    <th>입사일</th>
+    <th>시급</th>
+    <th>상세 정보</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr th:each ="emp : ${empList}">
+    <td th:text = "${emp.name} + '(' + ${emp.employeeId}+ ')'">홍길동(1)</td>
+    <td th:text = "${#strings.replace(emp.phoneNumber, ',', '-')}">010-1234-5678</td>
+    <td th:text = "${#strings.replace(emp.emPhoneNumber, ',', '-')}">010-1234-5678</td>
+    <td th:text="${#temporals.format(emp.hireDate, 'yyyy-MM-dd')}">2021-05-12</td>
+    <td th:text="${#numbers.formatDecimal(emp.hourWage, 0, 'COMMA', 0, 'POINT')}">1,000원</td>
+    <td><input type="button" value="보기" class="userdetailbtn table-btn" th:onclick="|openUserDetail('${emp.employeeId}')|"></td>
+    <input type="hidden" th:value="${emp.employeeId}">
+  </tr>
+  </tbody>
+</table>
+
+<div class="paginate">
+  <ul class="pagination justify-content-center">
+    <li class="page-item" th:classappend="${1 == empList.pageable.pageNumber + 1} ? 'disabled'">
+      <a class="page-link" href="#" th:href="@{/admin/empList(page=${empList.pageable.pageNumber - 1},searchCondition=${searchCondition},searchKeyword=${searchKeyword})}" tabindex="-1" aria-disabled="true">Previous</a>
+    </li>
+
+    <li class="page-item" th:classappend="${i == empList.pageable.pageNumber + 1} ? 'disabled'" th:each="i : ${#numbers.sequence(startPage, endPage)}">
+      <a class="page-link" href="#" th:href="@{/admin/empList(page=${i - 1},searchCondition=${searchCondition},searchKeyword=${searchKeyword})}" th:text="${i}">1</a></li>
+
+    <li class="page-item" th:classappend="${empList.totalPages == empList.pageable.pageNumber + 1} ? 'disabled'">
+      <a class="page-link" href="#" th:href="@{/admin/empList(page=${empList.pageable.pageNumber + 1},searchCondition=${searchCondition},searchKeyword=${searchKeyword})}">Next</a>
+    </li>
+  </ul>
+</div>
+
+<script>
+  function openUserDetail(id){ //유저 상세정보 페이지 open (컨트롤러 만들어야함)
+    location.href='/admin/userList/user/' + id;
+  }
+
+</script>
+
+</body>
+</html>

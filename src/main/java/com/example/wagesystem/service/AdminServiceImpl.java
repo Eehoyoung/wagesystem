@@ -2,7 +2,11 @@ package com.example.wagesystem.service;
 
 import com.example.wagesystem.domain.Attendance;
 import com.example.wagesystem.domain.Employee;
+import com.example.wagesystem.domain.SearchEmployee;
 import com.example.wagesystem.dto.DailyWageDto;
+import com.example.wagesystem.dto.EmployeeDto;
+import com.example.wagesystem.dto.EmployeePageDto;
+import com.example.wagesystem.exception.LoginIdNotFoundException;
 import com.example.wagesystem.repository.AttendanceRepository;
 import com.example.wagesystem.repository.EmployeeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,6 +75,42 @@ public class AdminServiceImpl implements AdminService {
             startDate = startDate.plusDays(1);
         }
         return dailyWages;
+    }
+
+    @Override
+    public EmployeePageDto findAllEmployeeByPaging(Pageable pageable) {
+        EmployeePageDto employeePageDto = new EmployeePageDto();
+        Page<EmployeeDto> employeeBoards = employeeRepository.searchAll(pageable);
+        int homeStartPage = Math.max(1, employeeBoards.getPageable().getPageNumber());
+        int homeEndPage = Math.min(employeeBoards.getTotalPages(), employeeBoards.getPageable().getPageNumber() + 5);
+
+        employeePageDto.setEmployeeBoards(employeeBoards);
+        employeePageDto.setStartPage(homeStartPage);
+        employeePageDto.setEndPage(homeEndPage);
+
+        return employeePageDto;
+    }
+
+    @Override
+    public EmployeePageDto findAllEmployeeByConditionByPaging(SearchEmployee searchEmployee, Pageable pageable) {
+        EmployeePageDto employeePageDto = new EmployeePageDto();
+        Page<EmployeeDto> employeeBoards = employeeRepository.searchByCondition(searchEmployee, pageable);
+
+        int startPage = Math.max(1, employeeBoards.getPageable().getPageNumber() - 2);
+        int endPage = Math.min(employeeBoards.getTotalPages(), startPage + 4);
+
+        employeePageDto.setEmployeeBoards(employeeBoards);
+        employeePageDto.setStartPage(startPage);
+        employeePageDto.setEndPage(endPage);
+
+        return employeePageDto;
+    }
+
+    @Override
+    public Employee findEmployeeById(Long id) {
+        return employeeRepository.findById(id).orElseThrow(
+                () -> new LoginIdNotFoundException("해당 회원을 찾을 수 없습니다.")
+        );
     }
 
 

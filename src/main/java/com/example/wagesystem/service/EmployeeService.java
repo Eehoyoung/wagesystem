@@ -41,9 +41,4 @@ public interface EmployeeService {
 
     Page<Employee> findAllMemberByOrderByCreatedAt(Pageable pageable);
 
-    EmployeePageDto findAllEmployePaging(Pageable pageable);
-
-    EmployeePageDto findAllEmployeeByConditionByPaging(SearchEmployee searchEmployee, Pageable pageable);
-
-
 }
