@@ -37,6 +37,7 @@ public class EmployeeInfoDto {
     private LocalDate endWeeklyAllowance;
 
     private BigDecimal monthWage;
+
     @Builder
     public EmployeeInfoDto(Position position, String store, Long employeeId, String loginId, String loginPw, String name, String phoneNumber, String birthday, String EmPhoneNumber, BigDecimal hourWage, LocalDate startWeeklyAllowance, LocalDate endWeeklyAllowance, BigDecimal monthWage) {
         this.employeeId = employeeId;

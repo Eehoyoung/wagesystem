@@ -6,13 +6,15 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.sql.Time;
+import java.time.Duration;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Getter
 @Setter
 public class AttendanceDto {
 
-    private Employee employee;
+    private String employeeName;
 
     private Long attendanceId;
 
@@ -26,14 +28,15 @@ public class AttendanceDto {
 
     private BigDecimal dailyWage;
 
+    private LocalDate workDay;
 
-    public AttendanceDto(Long attendanceId, Time workTime, LocalDateTime startTime, LocalDateTime endTime, Employee employee, BigDecimal dailyWage) {
-        this.attendanceId = attendanceId;
-        this.startTime = startTime;
-        this.endTime = endTime;
-        this.employee = employee;
-        this.workTime = workTime;
-        this.dailyWage = dailyWage;
-    }
+    private BigDecimal weeklyAllowance;
 
+    private BigDecimal bonus;
+
+    private LocalDate date;
+
+    private String dayOfWeek;
+
+    private Time durationOfWorkTime;
 }

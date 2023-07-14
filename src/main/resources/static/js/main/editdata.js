@@ -1,4 +1,4 @@
-function asendit(){
+function asendit() {
     if ($('#user_id').val() === "") {
         alert("아이디는 필수 입력값입니다.");
         $('#user_id').focus();
@@ -119,28 +119,28 @@ function asendit(){
     }
 
 }
-$(function(){
+
+$(function () {
 
     const token = $("meta[name='_csrf']").attr("content");
     const header = $("meta[name='_csrf_header']").attr("content");
 
-    $('.withdrawbtn').on('click', function(){
-        if(confirm('탈퇴 시 일부 정보를 제외한 모든 정보가 삭제 됩니다.')){
+    $('.withdrawbtn').on('click', function () {
+        if (confirm('탈퇴 시 일부 정보를 제외한 모든 정보가 삭제 됩니다.')) {
             const user_pw_temp = $('#login_pw').val();
             $.ajax({
                 type: 'DELETE',
                 url: `/main/withdrawal/${user_pw_temp}`,
-                data: {loginPw : user_pw_temp},
-                beforeSend : function(xhr)
-                {   /*데이터를 전송하기 전에 헤더에 csrf값을 설정한다*/
+                data: {loginPw: user_pw_temp},
+                beforeSend: function (xhr) {   /*데이터를 전송하기 전에 헤더에 csrf값을 설정한다*/
                     xhr.setRequestHeader(header, token);
                 }
-            }).done(function(word){
+            }).done(function (word) {
                 alert(word); //정상적으로 회원탈퇴 되었습니다. or 비밀번호가 올바르지 않습니다.
-                if(word.charAt(0) === "정"){
-                    location.href='/main/index';
+                if (word.charAt(0) === "정") {
+                    location.href = '/main/index';
                 }
-            }).fail(function (error){
+            }).fail(function (error) {
                 alert(JSON.stringify(error));
             })
         }

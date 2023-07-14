@@ -6,9 +6,12 @@ import com.example.wagesystem.domain.SearchEmployee;
 import com.example.wagesystem.dto.DailyWageDto;
 import com.example.wagesystem.dto.EmployeeDto;
 import com.example.wagesystem.dto.EmployeePageDto;
+import com.example.wagesystem.dto.ResignationEmpDto;
+import com.example.wagesystem.dto.attendance.AttendanceDto;
 import com.example.wagesystem.exception.LoginIdNotFoundException;
 import com.example.wagesystem.repository.AttendanceRepository;
 import com.example.wagesystem.repository.EmployeeRepository;
+import com.example.wagesystem.repository.ResignationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -28,11 +31,13 @@ public class AdminServiceImpl implements AdminService {
 
     private final EmployeeRepository employeeRepository;
     private final AttendanceRepository attendanceRepository;
+    private final ResignationRepository resignationRepository;
 
     @Autowired
-    public AdminServiceImpl(EmployeeRepository employeeRepository, AttendanceRepository attendanceRepository) {
+    public AdminServiceImpl(EmployeeRepository employeeRepository, AttendanceRepository attendanceRepository, ResignationRepository resignationRepository) {
         this.employeeRepository = employeeRepository;
         this.attendanceRepository = attendanceRepository;
+        this.resignationRepository = resignationRepository;
     }
 
 
@@ -113,6 +118,49 @@ public class AdminServiceImpl implements AdminService {
         );
     }
 
+    @Override
+    public List<AttendanceDto> getEmployeeAttendance(Long employeeId) {
+        List<Attendance> attendanceList = attendanceRepository.findAttendanceByEmployee(employeeId);
+        List<AttendanceDto> attendanceDtoList = new ArrayList<>();
+
+        for (Attendance attendance : attendanceList) {
+            AttendanceDto attendanceDto = new AttendanceDto();
+            attendanceDto.setAttendanceId(attendance.getAttendanceId());
+            attendanceDto.setEmployeeId(attendance.getEmployee().getEmployeeId());
+            attendanceDto.setEmployeeName(attendance.getEmployee().getName());
+            attendanceDto.setStartTime(attendance.getStartTime());
+            attendanceDto.setEndTime(attendance.getEndTime());
+            attendanceDto.setWorkTime(attendance.getWorkTime());
+            attendanceDto.setDailyWage(attendance.getDailyWage());
+            attendanceDto.setWorkDay(attendance.getWorkDay());
+            attendanceDto.setWeeklyAllowance(attendance.getWeeklyAllowance());
+            attendanceDto.setBonus(attendance.getBonus());
+            attendanceDto.setDayOfWeek(attendance.getWorkDay().getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.KOREAN));
+
+            attendanceDtoList.add(attendanceDto);
+        }
+
+        return attendanceDtoList;
+    }
+
+    @Override
+    public EmployeePageDto findAllReEmployeeByPaging(Pageable pageable) {
+        EmployeePageDto employeePageDto = new EmployeePageDto();
+        Page<ResignationEmpDto> ReEmployeeBoards = resignationRepository.searchAll(pageable);
+        int homeStartPage = Math.max(1, ReEmployeeBoards.getPageable().getPageNumber());
+        int homeEndPage = Math.min(ReEmployeeBoards.getTotalPages(), ReEmployeeBoards.getPageable().getPageNumber() + 5);
+
+        employeePageDto.setReEmployeeBoards(ReEmployeeBoards);
+        employeePageDto.setStartPage(homeStartPage);
+        employeePageDto.setEndPage(homeEndPage);
+
+        return employeePageDto;
+    }
+
+    @Override
+    public EmployeePageDto findAllReEmployeeByConditionByPaging(SearchEmployee searchEmployee, Pageable pageable) {
+        return null;
+    }
 
     @Transactional
     public BigDecimal getTotalMonthlyWagesByEmployee() {

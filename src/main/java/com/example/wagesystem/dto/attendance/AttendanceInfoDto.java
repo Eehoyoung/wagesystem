@@ -4,7 +4,6 @@ import com.example.wagesystem.domain.Attendance;
 import com.example.wagesystem.domain.Employee;
 import lombok.*;
 
-import javax.persistence.Column;
 import java.math.BigDecimal;
 import java.sql.Time;
 import java.time.LocalDate;

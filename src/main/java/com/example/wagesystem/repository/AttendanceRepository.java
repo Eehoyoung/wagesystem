@@ -24,7 +24,7 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Long>, Q
     @Query("select e.hourwage from Employee e where e.employeeId = :employeeId")
     BigDecimal findHourWageByEmployeeId(@Param("employeeId") Long employeeId);
 
-    Page<Attendance> findAllByEmployee (Employee employee, Pageable pageable);
+    Page<Attendance> findAllByEmployee(Employee employee, Pageable pageable);
 
     @Query("SELECT a FROM Attendance a JOIN a.employee e WHERE e.employeeId = :employeeId AND a.workDay >= e.startWeeklyAllowance AND a.workDay <= e.endWeeklyAllowance")
     List<Attendance> findByEmployeeIdAndWorkDayBetweenStartAndEndWeeklyAllowance(@Param("employeeId") Long employeeId);
@@ -35,6 +35,9 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Long>, Q
     Page<Attendance> findAttendancesByWorkDay(@Param("currentDate") LocalDate currentDate, Pageable pageable);
 
     @Query("SELECT SUM(a.dailyWage) FROM Attendance a WHERE a.workDay >= :startDate AND a.workDay < :endDate")
-    BigDecimal getTotalWageByDate(@Param("startDate") LocalDate startDate,@Param("endDate") LocalDate endDate);
+    BigDecimal getTotalWageByDate(@Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
+    @Query("select a from Attendance a where a.employee.employeeId = :employeeId")
+    List<Attendance> findAttendanceByEmployee(@Param("employeeId") Long employeeId);
+
 }
 

@@ -10,6 +10,8 @@ public class EmployeePageDto {
 
     Page<EmployeeDto> employeeBoards;
 
+    Page<ResignationEmpDto> reEmployeeBoards;
+
     int startPage;
 
     int endPage;

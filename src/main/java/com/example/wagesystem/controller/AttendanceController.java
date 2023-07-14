@@ -117,7 +117,8 @@ public class AttendanceController {
                 attendanceInfoDto.setEndTime(endTime); // 퇴근 시간 입력
                 attendanceInfoDto.setStartTime(attendance.getStartTime()); //출근 시간 set
                 attendanceInfoDto.setWorkTime(attendanceService.calculationSetWorkTime(attendance.getStartTime(), endTime)); // 총 근무 시간 입력
-
+                attendanceInfoDto.setWeeklyAllowance(BigDecimal.ZERO);
+                attendanceInfoDto.setBonus(BigDecimal.ZERO);
                 attendanceInfoDto.setDailyWage(attendanceService.calculattionDailyWage(
                         attendanceService.calculationWorkTime(attendance.getStartTime(), endTime),
                         attendanceRepository.findHourWageByEmployeeId(employeeId)));

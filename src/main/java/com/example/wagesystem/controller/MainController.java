@@ -116,11 +116,11 @@ public class MainController {
         BigDecimal totalWage = findEmployee.getMonthWage();
         BigDecimal tax = findEmployee.getMonthWage().multiply(BigDecimal.valueOf(0.033));
 
-        AttendancePageDto attendancePageDto = attendanceServiceImpl.getWagePagingDto(loginId,pageable);
+        AttendancePageDto attendancePageDto = attendanceServiceImpl.getWagePagingDto(loginId, pageable);
         YearMonth currentYearMonth = YearMonth.now();
 
         model.addAttribute("totalWage", totalWage);
-        model.addAttribute("tax",tax);
+        model.addAttribute("tax", tax);
         model.addAttribute("realWage", totalWage.subtract(tax));
         model.addAttribute("startPage", attendancePageDto.getHomeStartPage());
         model.addAttribute("endPage", attendancePageDto.getHomeEndPage());

@@ -4,10 +4,8 @@ import com.querydsl.core.annotations.QueryProjection;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.Column;
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.Date;
 
 
 @Getter

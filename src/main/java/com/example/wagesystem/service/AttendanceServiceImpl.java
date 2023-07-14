@@ -49,7 +49,7 @@ public class AttendanceServiceImpl implements AttendanceService {
         );
 
         Page<Attendance> attendanceBoard = attendanceRepository.findAllByEmployee(findEmployee, pageable);
-        int homeStartPage = Math.max(1, attendanceBoard.getPageable().getPageNumber()-4);
+        int homeStartPage = Math.max(1, attendanceBoard.getPageable().getPageNumber() - 4);
         int homeEndPage = Math.min(attendanceBoard.getTotalPages(), attendanceBoard.getPageable().getPageNumber() + 4);
 
         attendancePageDto.setPayboards(attendanceBoard);
@@ -211,6 +211,7 @@ public class AttendanceServiceImpl implements AttendanceService {
         List<Attendance> attendances = attendanceRepository.findByEmployee_EmployeeIdOrderByStartTimeDesc(employeeId);
         return attendances.isEmpty() ? Optional.empty() : Optional.of(attendances.get(0));
     }
+
     @Transactional
     @Override
     public BigDecimal calculateMonthWage(Long employeeId) {

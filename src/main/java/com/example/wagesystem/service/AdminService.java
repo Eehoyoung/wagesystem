@@ -5,6 +5,8 @@ import com.example.wagesystem.domain.Employee;
 import com.example.wagesystem.domain.SearchEmployee;
 import com.example.wagesystem.dto.DailyWageDto;
 import com.example.wagesystem.dto.EmployeePageDto;
+import com.example.wagesystem.dto.attendance.AttendanceDto;
+import com.example.wagesystem.dto.attendance.AttendanceInfoDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,4 +30,10 @@ public interface AdminService {
     EmployeePageDto findAllEmployeeByConditionByPaging(SearchEmployee searchEmployee, Pageable pageable);
 
     Employee findEmployeeById(Long id);
+
+    List<AttendanceDto> getEmployeeAttendance(Long id);
+
+    EmployeePageDto findAllReEmployeeByPaging(Pageable pageable);
+
+    EmployeePageDto findAllReEmployeeByConditionByPaging(SearchEmployee searchEmployee, Pageable pageable);
 }

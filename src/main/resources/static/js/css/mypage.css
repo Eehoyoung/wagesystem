@@ -1,11 +1,11 @@
-body{
+body {
     display: flex;
     flex-direction: column;
     align-items: center;
     font-family: 'Noto Sans KR', sans-serif;
 }
 
-section{
+section {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -16,16 +16,16 @@ section{
     height: 600px;
 }
 
-section div{
+section div {
     margin-bottom: 20px;
 }
 
-section div:first-child{
+section div:first-child {
     font-size: 2em;
     font-weight: bold;
 }
 
-section div div{
+section div div {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -36,12 +36,12 @@ section div div{
     height: 80px;
 }
 
-section div div b{
+section div div b {
     font-size: 1.2em;
     margin-right: 5px;
 }
 
-section div div button{
+section div div button {
     background-color: #007aff;
     border: 1px solid #007aff;
     border-radius: 5px;
@@ -50,12 +50,12 @@ section div div button{
     cursor: pointer;
 }
 
-section div div button:hover{
+section div div button:hover {
     background-color: white;
     color: #007aff;
 }
 
-header, footer{
+header, footer {
     height: 80px;
     background-color: #333333;
     color: white;
@@ -65,14 +65,14 @@ header, footer{
     width: 100%;
 }
 
-header a, footer a{
+header a, footer a {
     text-decoration: none;
     color: white;
     margin: 0px 20px;
     font-size: 1.2em;
 }
 
-header a:hover, footer a:hover{
+header a:hover, footer a:hover {
     text-decoration: underline;
     color: #0dbaf1;
 }
