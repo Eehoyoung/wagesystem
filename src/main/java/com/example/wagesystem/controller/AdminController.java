@@ -3,6 +3,7 @@ package com.example.wagesystem.controller;
 import com.example.wagesystem.domain.Attendance;
 import com.example.wagesystem.domain.Employee;
 import com.example.wagesystem.domain.SearchEmployee;
+import com.example.wagesystem.domain.SearchResignation;
 import com.example.wagesystem.dto.DailyWageDto;
 import com.example.wagesystem.dto.EmployeeDto;
 import com.example.wagesystem.dto.EmployeePageDto;
@@ -82,14 +83,14 @@ public class AdminController {
     }
 
     @GetMapping("/admin/reEmpList")
-    public String reEmpList(Model model, @PageableDefault(size = 9) Pageable pageable, SearchEmployee searchEmployee) {
+    public String reEmpList(Model model, @PageableDefault(size = 9) Pageable pageable, SearchResignation searchResignation) {
 
         EmployeePageDto reEmployeePageDto = new EmployeePageDto();
 
-        if (searchEmployee.getSearchKeyWord() == null) {
+        if (searchResignation.getSearchKeyWord() == null) {
             reEmployeePageDto = adminService.findAllReEmployeeByPaging(pageable);
         } else {
-            reEmployeePageDto = adminService.findAllReEmployeeByConditionByPaging(searchEmployee, pageable);
+            reEmployeePageDto = adminService.findAllReEmployeeByConditionByPaging(searchResignation, pageable);
         }
 
         int homeStartPage = reEmployeePageDto.getStartPage();
@@ -99,8 +100,8 @@ public class AdminController {
         model.addAttribute("startPage", homeStartPage);
         model.addAttribute("endPage", homeEndPage);
         model.addAttribute("reEmpList", resignationEmployeeBoards);
-        model.addAttribute("searchCondition", searchEmployee.getSearchCondition());
-        model.addAttribute("searchKeyword", searchEmployee.getSearchKeyWord());
+        model.addAttribute("searchCondition", searchResignation.getSearchCondition());
+        model.addAttribute("searchKeyword", searchResignation.getSearchKeyWord());
 
         return "admin/admin_reEmpList";
     }

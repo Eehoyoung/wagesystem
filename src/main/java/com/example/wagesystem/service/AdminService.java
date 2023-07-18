@@ -3,6 +3,7 @@ package com.example.wagesystem.service;
 import com.example.wagesystem.domain.Attendance;
 import com.example.wagesystem.domain.Employee;
 import com.example.wagesystem.domain.SearchEmployee;
+import com.example.wagesystem.domain.SearchResignation;
 import com.example.wagesystem.dto.DailyWageDto;
 import com.example.wagesystem.dto.EmployeePageDto;
 import com.example.wagesystem.dto.attendance.AttendanceDto;
@@ -35,5 +36,5 @@ public interface AdminService {
 
     EmployeePageDto findAllReEmployeeByPaging(Pageable pageable);
 
-    EmployeePageDto findAllReEmployeeByConditionByPaging(SearchEmployee searchEmployee, Pageable pageable);
+    EmployeePageDto findAllReEmployeeByConditionByPaging(SearchResignation searchResignation, Pageable pageable);
 }

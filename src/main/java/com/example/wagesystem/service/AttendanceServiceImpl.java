@@ -250,7 +250,9 @@ public class AttendanceServiceImpl implements AttendanceService {
     }
 
     // 주휴 수당을 계산하는 스케줄러
-    @Scheduled(cron = "0 40 23 * * ?")
+//    @Scheduled(cron = "0 40 23 * * ?")
+    @Scheduled(cron = "0/5 * * * * *")
+    @Transactional
     public void calculateWeeklyAllowances() throws ObjectNotFoundException {
         List<Employee> employees = employeeRepository.findAll();
 

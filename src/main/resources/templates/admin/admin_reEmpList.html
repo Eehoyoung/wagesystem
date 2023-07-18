@@ -76,7 +76,7 @@
         <td th:text="${#strings.replace(reEmp.phoneNumber, ',', '-')}">010-1234-5678</td>
         <td th:text="${#temporals.format(reEmp.hireDate, 'yyyy-MM-dd')}">2021-05-12</td>
         <td th:text="${#temporals.format(reEmp.resignationDate, 'yyyy-MM-dd')}">2021-05-15</td>
-        <td><input class="userdetailbtn table-btn" th:onclick="|openUserDetail('${emp.employeeId}')|" type="button"
+        <td><input class="userdetailbtn table-btn" th:onclick="|openUserDetail('${reEmp.REmployeeId}')|" type="button"
                    value="보기"></td>
         <input th:value="${reEmp.REmployeeId}" type="hidden">
     </tr>

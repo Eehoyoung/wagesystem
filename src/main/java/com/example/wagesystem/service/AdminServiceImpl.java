@@ -3,6 +3,7 @@ package com.example.wagesystem.service;
 import com.example.wagesystem.domain.Attendance;
 import com.example.wagesystem.domain.Employee;
 import com.example.wagesystem.domain.SearchEmployee;
+import com.example.wagesystem.domain.SearchResignation;
 import com.example.wagesystem.dto.DailyWageDto;
 import com.example.wagesystem.dto.EmployeeDto;
 import com.example.wagesystem.dto.EmployeePageDto;
@@ -158,8 +159,18 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public EmployeePageDto findAllReEmployeeByConditionByPaging(SearchEmployee searchEmployee, Pageable pageable) {
-        return null;
+    public EmployeePageDto findAllReEmployeeByConditionByPaging(SearchResignation searchResignation, Pageable pageable) {
+        EmployeePageDto employeePageDto = new EmployeePageDto();
+        Page<ResignationEmpDto> ReEmployeeBoards = resignationRepository.searchByCondition(searchResignation, pageable);
+
+        int startPage = Math.max(1, ReEmployeeBoards.getPageable().getPageNumber() - 2);
+        int endPage = Math.min(ReEmployeeBoards.getTotalPages(), startPage + 4);
+
+        employeePageDto.setReEmployeeBoards(ReEmployeeBoards);
+        employeePageDto.setStartPage(startPage);
+        employeePageDto.setEndPage(endPage);
+
+        return employeePageDto;
     }
 
     @Transactional
