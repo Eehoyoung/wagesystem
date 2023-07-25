@@ -6,6 +6,7 @@ import com.example.wagesystem.domain.SearchEmployee;
 import com.example.wagesystem.domain.SearchResignation;
 import com.example.wagesystem.dto.AttendanceMissDto;
 import com.example.wagesystem.dto.DailyWageDto;
+import com.example.wagesystem.dto.EmployeeInfoDto;
 import com.example.wagesystem.dto.EmployeePageDto;
 import com.example.wagesystem.dto.attendance.AttendanceDto;
 import javassist.tools.rmi.ObjectNotFoundException;
@@ -45,5 +46,5 @@ public interface AdminService {
 
     Employee saveEmployee(Employee employee);
 
-    Attendance insertOrUpdateStartTime(AttendanceMissDto attendanceMissDto);
+    Attendance insertOrUpdateStartTime(AttendanceMissDto attendanceMissDto, EmployeeInfoDto employeeInfoDto);
 }

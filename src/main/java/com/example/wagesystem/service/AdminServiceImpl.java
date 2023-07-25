@@ -198,7 +198,7 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public Attendance insertOrUpdateStartTime(AttendanceMissDto attendanceMissDto) {
+    public Attendance insertOrUpdateStartTime(AttendanceMissDto attendanceMissDto, EmployeeInfoDto employeeInfoDto) {
         Attendance attendance = new Attendance();
 
         Employee findEmployee = employeeRepository.findById(attendanceMissDto.getEmployeeId()).orElseThrow(
@@ -214,8 +214,16 @@ public class AdminServiceImpl implements AdminService {
         attendance.setDailyWage(attendanceService.calculattionDailyWage(
                 attendanceService.calculationWorkTime(attendanceMissDto.getStartTime(), attendanceMissDto.getEndTime()),
                 attendanceRepository.findHourWageByEmployeeId(attendanceMissDto.getEmployeeId())));
+        attendanceRepository.save(attendance);
+        BigDecimal monthWage = attendanceService.calculateMonthWage(attendance.getEmployee().getEmployeeId());
+        employeeInfoDto.setMonthWage(monthWage);
+        try {
+            employeeService.updateMonthWage(attendance.getEmployee().getEmployeeId(), employeeInfoDto);
+        } catch (ObjectNotFoundException e) {
+            throw new RuntimeException(e);
+        }
 
-        return attendanceRepository.save(attendance);
+        return attendance;
     }
 
     @Transactional
@@ -242,13 +250,14 @@ public class AdminServiceImpl implements AdminService {
 
     @Scheduled(cron = "0 30 23 * * ?")
     @Transactional
-    public void autoInsertEndWork(AttendanceInfoDto attendanceInfoDto, EmployeeInfoDto employeeInfoDto) {
+    public void autoInsertEndWork() {
         // 퇴근 처리가 안된 출석체크 기록을 찾습니다.
         List<Attendance> attendances = attendanceRepository.findAttendanceWithoutEndTime();
         LocalDateTime endTime = LocalDateTime.of(LocalDate.now(), LocalTime.of(22, 0));
 
         for (Attendance attendance : attendances) {
             if (attendance.getWorkTime() != null) {
+                AttendanceInfoDto attendanceInfoDto = new AttendanceInfoDto();
                 attendanceInfoDto.setAttendanceId(attendance.getAttendanceId());
                 attendanceInfoDto.setEndTime(endTime); // 퇴근 시간 입력
                 attendanceInfoDto.setStartTime(attendance.getStartTime()); //출근 시간 set
@@ -262,6 +271,7 @@ public class AdminServiceImpl implements AdminService {
                 attendanceService.updateAttendance(attendance.getAttendanceId(), attendanceInfoDto);
 
                 BigDecimal monthWage = attendanceService.calculateMonthWage(attendance.getEmployee().getEmployeeId());
+                EmployeeInfoDto employeeInfoDto = new EmployeeInfoDto();
                 employeeInfoDto.setMonthWage(monthWage);
                 try {
                     employeeService.updateMonthWage(attendance.getEmployee().getEmployeeId(), employeeInfoDto);
@@ -269,7 +279,6 @@ public class AdminServiceImpl implements AdminService {
                     throw new RuntimeException(e);
                 }
             }
-            attendanceRepository.save(attendance);
         }
     }
 }

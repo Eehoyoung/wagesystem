@@ -127,8 +127,8 @@ public class AdminController {
     }
 
     @PostMapping("/fix/attendance")
-    public String insertOrUpdateStartTime(@ModelAttribute AttendanceMissDto attendanceMissDto, Model model) {
-        Attendance attendance = adminService.insertOrUpdateStartTime(attendanceMissDto);
+    public String insertOrUpdateStartTime(@ModelAttribute AttendanceMissDto attendanceMissDto, Model model, EmployeeInfoDto employeeInfoDto) {
+        Attendance attendance = adminService.insertOrUpdateStartTime(attendanceMissDto,employeeInfoDto);
         model.addAttribute("message", "사원번호: " + attendance.getEmployee().getEmployeeId() +"의 근무 이력이 정상적으로 입력되었습니다.");
         return "admin/admin_attendance_result";
     }
