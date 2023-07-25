@@ -2,8 +2,8 @@ package com.example.wagesystem.repository;
 
 import com.example.wagesystem.domain.QEmployee;
 import com.example.wagesystem.domain.SearchEmployee;
-import com.example.wagesystem.dto.EmployeeDto;
 import com.example.wagesystem.dto.QEmployeeDto;
+import com.example.wagesystem.dto.employee.EmployeeDto;
 import com.querydsl.core.QueryResults;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -36,7 +36,6 @@ public class EmployeeRepositoryImpl implements EmployeeRepositoryCustom {
                         QEmployee.employee.hourwage,
                         QEmployee.employee.EmPhoneNumber
                 ))
-// (Long EmployeeId, String name, Position position, String store, String phoneNumber, LocalDate hireDate, BigDecimal hourWage, String emPhoneNumber)
                 .from(QEmployee.employee)
                 .orderBy(QEmployee.employee.hireDate.desc())
                 .offset(pageable.getOffset())

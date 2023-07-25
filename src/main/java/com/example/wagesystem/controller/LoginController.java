@@ -1,6 +1,6 @@
 package com.example.wagesystem.controller;
 
-import com.example.wagesystem.dto.EmployeeInfoDto;
+import com.example.wagesystem.dto.employee.EmployeeInfoDto;
 import com.example.wagesystem.service.EmployeeServiceImpl;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;

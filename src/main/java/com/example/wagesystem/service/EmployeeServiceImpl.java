@@ -2,7 +2,11 @@ package com.example.wagesystem.service;
 
 import com.example.wagesystem.domain.Employee;
 import com.example.wagesystem.domain.Resignation;
-import com.example.wagesystem.dto.*;
+import com.example.wagesystem.dto.Position;
+import com.example.wagesystem.dto.employee.EmployeeInfoDto;
+import com.example.wagesystem.dto.employee.MyPageDto;
+import com.example.wagesystem.dto.employee.ProfileDto;
+import com.example.wagesystem.dto.resignation.ResignationDto;
 import com.example.wagesystem.exception.LoginIdNotFoundException;
 import com.example.wagesystem.repository.EmployeeRepository;
 import com.example.wagesystem.repository.ResignationRepository;

@@ -1,6 +1,7 @@
-package com.example.wagesystem.dto;
+package com.example.wagesystem.dto.employee;
 
 import com.example.wagesystem.domain.Employee;
+import com.example.wagesystem.dto.Position;
 import lombok.*;
 
 import java.math.BigDecimal;

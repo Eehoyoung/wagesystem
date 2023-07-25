@@ -1,5 +1,6 @@
-package com.example.wagesystem.dto;
+package com.example.wagesystem.dto.employee;
 
+import com.example.wagesystem.dto.resignation.ResignationEmpDto;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.domain.Page;

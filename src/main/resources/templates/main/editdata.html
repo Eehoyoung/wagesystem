@@ -1,120 +1,138 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="en">
+<html lang="en" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta content="IE=edge" http-equiv="X-UA-Compatible">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <meta name="_csrf" th:content="${_csrf.token}"/>
     <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
-    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.gstatic.com" rel="preconnect">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Antonio&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.3/css/all.css" integrity="sha384-SZXxX4whJ79/gErwcOYf+zWLeJdY/qpuqC4cAa9rOGUstPomtqpuNWT9wdPEn2fk" crossorigin="anonymous">
+    <link crossorigin="anonymous" href="https://use.fontawesome.com/releases/v5.15.3/css/all.css"
+          integrity="sha384-SZXxX4whJ79/gErwcOYf+zWLeJdY/qpuqC4cAa9rOGUstPomtqpuNWT9wdPEn2fk" rel="stylesheet">
     <title>editdata</title>
     <script src="/js/jquery.js"></script>
     <script src="/js/main/editdata.js"></script>
 
 </head>
 <body>
-    <!--header start-->
-    <header th:replace="main/header :: main_headerFragment">
-    </header>
-    <!--header end-->
+<!--header start-->
+<header th:replace="main/header :: main_headerFragment">
+</header>
+<!--header end-->
 
-    <!--section-->
-    <section>
-        <div class="section_caption">
-            정보수정
-        </div>
+<!--section-->
+<section>
+    <div class="section_caption">
+        정보수정
+    </div>
 
-        <div class="member_type">
-            <div class="member_type_desc">
-                <div>귀하의 노고에 감사드립니다. <b th:text="${employee.name}">NAME</b> 님은 <b sec:authorize="hasRole('ROLE_STAFF')">[STAFF]</b><b sec:authorize="hasRole('ROLE_DUTERY')">[부점장]</b> 이십니다</div>
+    <div class="member_type">
+        <div class="member_type_desc">
+            <div>귀하의 노고에 감사드립니다. <b th:text="${employee.name}">NAME</b> 님은 <b sec:authorize="hasRole('ROLE_STAFF')">[STAFF]</b><b
+                    sec:authorize="hasRole('ROLE_DUTERY')">[부점장]</b> 이십니다
             </div>
         </div>
+    </div>
 
-        <div class="section_content">
-            <form action="" method="POST" onsubmit="return asendit()">
-                <input type="hidden" name="_method" value="put">
-                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-                <table class="basicdata">
-                    <colgroup>
-                        <col width="120px"/>
-                        <col width="auto"/>
-                    </colgroup>
-                    <tr>
-                        <th><label for="user_id">아이디<span>＊</span></label></th>
-                        <td><input type="text" name="loginId" id="user_id" th:value="${employee.loginId}" readonly></td>
-                    </tr>
-                    <tr>
-                        <th><label for="login_pw">비밀번호<span>＊</span></label></th>
-                        <td><input type="password" name="loginPw" id="login_pw">&nbsp; (영문 대소문자/숫자/특수문자 중2가지 이상 조합, 10~16자)</td>
-                    </tr>
-                    <tr>
-                        <th><label for="login_pw_ok">비밀번호확인<span>＊</span></label></th>
-                        <td><input type="password" id="login_pw_ok"></td>
-                    </tr>
-                    <tr>
-                        <th><label for="user_name">이름<span>＊</span></label></th>
-                        <td><input type="text" name="name" id="user_name" th:value="${employee.name}" ></td>
-                    </tr>
-                    <tr>
-                        <th><label for="emphone_number">긴급전화</label></th>
-                        <td>
-                            <select name="emphone_number" id="emphone_number" class="emphone_number">
-                                <option value="010" th:selected="${#strings.equals( employee.emPhoneNumber[0], '010' )}">010</option>
-                            </select>
-                            -
-                            <input th:if="${#lists.size(employee.emPhoneNumber) >= 3}" type="text" name="emPhoneNumber" class="emphone_number" th:value="${employee.emPhoneNumber[1]}">
-                            <input th:if="${#lists.size(employee.emPhoneNumber) < 3}" type="text" name="emPhoneNumber" class="emphone_number">
-                            -
-                            <input th:if="${#lists.size(employee.emPhoneNumber) >= 3}" type="text" name="emPhoneNumber" class="emphone_number" th:value="${employee.emPhoneNumber[2]}">
-                            <input th:if="${#lists.size(employee.emPhoneNumber) < 3}" type="text" name="emPhoneNumber" class="emphone_number">
-                        </td>
-                    </tr>
-                    <tr>
-                        <th><label for="phone_number">휴대전화<span>＊</span></label></th>
-                        <td>
-                            <select name="phoneNumber" id="phone_number" class="phone_number">
-                                <option value="010" th:selected="${#strings.equals( employee.phoneNumber[0], '010' )}">010</option>
-                            </select>
-                            -
-                            <input th:if="${#lists.size(employee.phoneNumber) >= 3}" type="text" name="phoneNumber" class="phone_number" th:value="${employee.phoneNumber[1]}">
-                            <input th:if="${#lists.size(employee.phoneNumber) < 3}" type="text" name="phoneNumber" class="phone_number">
-                            -
-                            <input th:if="${#lists.size(employee.phoneNumber) >= 3}" type="text" name="phoneNumber" class="phone_number" th:value="${employee.phoneNumber[2]}">
-                            <input th:if="${#lists.size(employee.phoneNumber) < 3}" type="text" name="phoneNumber" class="phone_number">
-                        </td>
-                    </tr>
-                </table>
-                <table class="additionaldata">
-                    <colgroup>
-                        <col width="120px"/>
-                        <col width="auto"/>
-                    </colgroup>
-                    <tr>
-                        <th><label for="birth_year">생년월일</label></th>
-                        <td>
-                            <input type="text" name="birthday" class="birth_day" id="birth_year" th:value="${employee.birthday[0]}">
-                            년&nbsp;&nbsp;&nbsp;
-                            <input type="text" name="birthday" class="birth_day" id="birth_month" th:value="${employee.birthday[1]}">
-                            월&nbsp;&nbsp;&nbsp;
-                            <input type="text" name="birthday" class="birth_day" id="birth_day" th:value="${employee.birthday[2]}">
-                            일
-                        </td>
-                    </tr>
-                </table>
-                <div class="bottombtn_box">
-                    <input type="submit" class="registerbtn bottombtn" value="회원정보수정" formaction="/update">
-                    <button class="cancelbtn bottombtn" onclick="location.href=''">취소</button>
-                    <input type="button" class="withdrawbtn bottombtn" value="회원탈퇴" formaction="/withdraw">
-                </div>
-            </form>
-        </div>
-    </section>
+    <div class="section_content">
+        <form action="" method="POST" onsubmit="return asendit()">
+            <input name="_method" type="hidden" value="put">
+            <input th:name="${_csrf.parameterName}" th:value="${_csrf.token}" type="hidden"/>
+            <table class="basicdata">
+                <colgroup>
+                    <col width="120px"/>
+                    <col width="auto"/>
+                </colgroup>
+                <tr>
+                    <th><label for="user_id">아이디<span>＊</span></label></th>
+                    <td><input id="user_id" name="loginId" readonly th:value="${employee.loginId}" type="text"></td>
+                </tr>
+                <tr>
+                    <th><label for="login_pw">비밀번호<span>＊</span></label></th>
+                    <td><input id="login_pw" name="loginPw" type="password">&nbsp; (영문 대소문자/숫자/특수문자 중2가지 이상 조합, 10~16자)
+                    </td>
+                </tr>
+                <tr>
+                    <th><label for="login_pw_ok">비밀번호확인<span>＊</span></label></th>
+                    <td><input id="login_pw_ok" type="password"></td>
+                </tr>
+                <tr>
+                    <th><label for="user_name">이름<span>＊</span></label></th>
+                    <td><input id="user_name" name="name" th:value="${employee.name}" type="text"></td>
+                </tr>
+                <tr>
+                    <th><label for="emphone_number">긴급전화</label></th>
+                    <td>
+                        <select class="emphone_number" id="emphone_number" name="emphone_number">
+                            <option th:selected="${#strings.equals( employee.emPhoneNumber[0], '010' )}" value="010">
+                                010
+                            </option>
+                        </select>
+                        -
+                        <input class="emphone_number" name="emPhoneNumber" th:if="${#lists.size(employee.emPhoneNumber) >= 3}"
+                               th:value="${employee.emPhoneNumber[1]}" type="text">
+                        <input class="emphone_number" name="emPhoneNumber" th:if="${#lists.size(employee.emPhoneNumber) < 3}"
+                               type="text">
+                        -
+                        <input class="emphone_number" name="emPhoneNumber" th:if="${#lists.size(employee.emPhoneNumber) >= 3}"
+                               th:value="${employee.emPhoneNumber[2]}" type="text">
+                        <input class="emphone_number" name="emPhoneNumber" th:if="${#lists.size(employee.emPhoneNumber) < 3}"
+                               type="text">
+                    </td>
+                </tr>
+                <tr>
+                    <th><label for="phone_number">휴대전화<span>＊</span></label></th>
+                    <td>
+                        <select class="phone_number" id="phone_number" name="phoneNumber">
+                            <option th:selected="${#strings.equals( employee.phoneNumber[0], '010' )}" value="010">010
+                            </option>
+                        </select>
+                        -
+                        <input class="phone_number" name="phoneNumber" th:if="${#lists.size(employee.phoneNumber) >= 3}"
+                               th:value="${employee.phoneNumber[1]}" type="text">
+                        <input class="phone_number" name="phoneNumber" th:if="${#lists.size(employee.phoneNumber) < 3}"
+                               type="text">
+                        -
+                        <input class="phone_number" name="phoneNumber" th:if="${#lists.size(employee.phoneNumber) >= 3}"
+                               th:value="${employee.phoneNumber[2]}" type="text">
+                        <input class="phone_number" name="phoneNumber" th:if="${#lists.size(employee.phoneNumber) < 3}"
+                               type="text">
+                    </td>
+                </tr>
+            </table>
+            <table class="additionaldata">
+                <colgroup>
+                    <col width="120px"/>
+                    <col width="auto"/>
+                </colgroup>
+                <tr>
+                    <th><label for="birth_year">생년월일</label></th>
+                    <td>
+                        <input class="birth_day" id="birth_year" name="birthday" th:value="${employee.birthday[0]}"
+                               type="text">
+                        년&nbsp;&nbsp;&nbsp;
+                        <input class="birth_day" id="birth_month" name="birthday" th:value="${employee.birthday[1]}"
+                               type="text">
+                        월&nbsp;&nbsp;&nbsp;
+                        <input class="birth_day" id="birth_day" name="birthday" th:value="${employee.birthday[2]}"
+                               type="text">
+                        일
+                    </td>
+                </tr>
+            </table>
+            <div class="bottombtn_box">
+                <input class="registerbtn bottombtn" formaction="/update" type="submit" value="회원정보수정">
+                <button class="cancelbtn bottombtn" onclick="location.href=''">취소</button>
+                <input class="withdrawbtn bottombtn" formaction="/withdraw" type="button" value="회원탈퇴">
+            </div>
+        </form>
+    </div>
+</section>
 
-    <!--footer-->
-    <footer th:replace="main/footer :: main_footerFragment">
-    </footer>
+<!--footer-->
+<footer th:replace="main/footer :: main_footerFragment">
+</footer>
 </body>
 </html>

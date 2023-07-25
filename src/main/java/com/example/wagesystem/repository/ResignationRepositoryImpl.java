@@ -1,13 +1,9 @@
 package com.example.wagesystem.repository;
 
-import com.example.wagesystem.domain.QEmployee;
 import com.example.wagesystem.domain.QResignation;
-import com.example.wagesystem.domain.SearchEmployee;
 import com.example.wagesystem.domain.SearchResignation;
-import com.example.wagesystem.dto.EmployeeDto;
-import com.example.wagesystem.dto.QEmployeeDto;
 import com.example.wagesystem.dto.QResignationEmpDto;
-import com.example.wagesystem.dto.ResignationEmpDto;
+import com.example.wagesystem.dto.resignation.ResignationEmpDto;
 import com.querydsl.core.QueryResults;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;

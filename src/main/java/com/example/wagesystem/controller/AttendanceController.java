@@ -3,8 +3,8 @@ package com.example.wagesystem.controller;
 
 import com.example.wagesystem.domain.Attendance;
 import com.example.wagesystem.domain.Employee;
-import com.example.wagesystem.dto.EmployeeInfoDto;
 import com.example.wagesystem.dto.attendance.AttendanceInfoDto;
+import com.example.wagesystem.dto.employee.EmployeeInfoDto;
 import com.example.wagesystem.exception.AttendanceException;
 import com.example.wagesystem.repository.AttendanceRepository;
 import com.example.wagesystem.repository.EmployeeRepository;

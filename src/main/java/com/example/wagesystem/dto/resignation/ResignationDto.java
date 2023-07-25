@@ -1,4 +1,4 @@
-package com.example.wagesystem.dto;
+package com.example.wagesystem.dto.resignation;
 
 import com.example.wagesystem.domain.Resignation;
 import lombok.Getter;

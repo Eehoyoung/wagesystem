@@ -2,10 +2,10 @@ package com.example.wagesystem.service;
 
 
 import com.example.wagesystem.domain.Employee;
-import com.example.wagesystem.dto.EmployeeInfoDto;
-import com.example.wagesystem.dto.MyPageDto;
-import com.example.wagesystem.dto.ProfileDto;
-import com.example.wagesystem.dto.ResignationDto;
+import com.example.wagesystem.dto.employee.EmployeeInfoDto;
+import com.example.wagesystem.dto.employee.MyPageDto;
+import com.example.wagesystem.dto.employee.ProfileDto;
+import com.example.wagesystem.dto.resignation.ResignationDto;
 import javassist.tools.rmi.ObjectNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

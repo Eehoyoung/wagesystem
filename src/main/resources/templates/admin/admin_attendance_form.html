@@ -1,30 +1,30 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-  <meta charset="UTF-8">
-  <title>출근 처리</title>
+    <meta charset="UTF-8">
+    <title>출근 처리</title>
 </head>
 <body>
 <h1>출근 처리</h1>
-<form th:action="@{/fix/attendance}" th:object="${attendanceMissDto}" method="post">
-  <div>
-    <label for="employeeId">사원번호:</label>
-    <input type="number" id="employeeId" name="employeeId" required/>
-  </div>
-  <div>
-    <label for="workDay">근무일:</label>
-    <input type="date" id="workDay" name="workDay" required/>
-  </div>
-  <div>
-    <label for="startTime">출근 시간:</label>
-    <input type="datetime-local" step="any" id="startTime" name="startTime" required/>
-  </div>
-  <div>
-    <label for="endTime">퇴근 시간:</label>
-    <input type="datetime-local" step="any" id="endTime" name="endTime" required/>
-  </div>
+<form method="post" th:action="@{/fix/attendance}" th:object="${attendanceMissDto}">
+    <div>
+        <label for="employeeId">사원번호:</label>
+        <input id="employeeId" name="employeeId" required type="number"/>
+    </div>
+    <div>
+        <label for="workDay">근무일:</label>
+        <input id="workDay" name="workDay" required type="date"/>
+    </div>
+    <div>
+        <label for="startTime">출근 시간:</label>
+        <input id="startTime" name="startTime" required step="any" type="datetime-local"/>
+    </div>
+    <div>
+        <label for="endTime">퇴근 시간:</label>
+        <input id="endTime" name="endTime" required step="any" type="datetime-local"/>
+    </div>
 
-  <button type="submit">확인</button>
+    <button type="submit">확인</button>
 </form>
 </body>
 </html>

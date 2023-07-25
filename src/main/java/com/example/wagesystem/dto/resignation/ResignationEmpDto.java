@@ -1,11 +1,9 @@
-package com.example.wagesystem.dto;
+package com.example.wagesystem.dto.resignation;
 
 import com.querydsl.core.annotations.QueryProjection;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.validator.internal.util.privilegedactions.LoadClass;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Getter

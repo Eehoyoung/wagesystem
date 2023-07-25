@@ -1,5 +1,6 @@
-package com.example.wagesystem.dto;
+package com.example.wagesystem.dto.employee;
 
+import com.example.wagesystem.dto.Position;
 import com.querydsl.core.annotations.QueryProjection;
 import lombok.Getter;
 import lombok.Setter;

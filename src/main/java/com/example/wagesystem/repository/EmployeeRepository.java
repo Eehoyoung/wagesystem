@@ -14,7 +14,7 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long>, Emplo
     Long findByEmployeeId(@Param("loginid") String loginId);
 
     @Query("select e.employeeId from Employee e where e.employeeId = :employeeId")
-    String findBySeachAllId(@Param("employeeId") Long employeeId);
+    String findBySearchAllId(@Param("employeeId") Long employeeId);
 
     Optional<Employee> findByLoginId(String loginId);
 

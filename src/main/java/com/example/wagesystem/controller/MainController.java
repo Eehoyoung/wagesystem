@@ -1,10 +1,10 @@
 package com.example.wagesystem.controller;
 
 import com.example.wagesystem.domain.Employee;
-import com.example.wagesystem.dto.MyPageDto;
-import com.example.wagesystem.dto.ProfileDto;
-import com.example.wagesystem.dto.ResignationDto;
 import com.example.wagesystem.dto.attendance.AttendancePageDto;
+import com.example.wagesystem.dto.employee.MyPageDto;
+import com.example.wagesystem.dto.employee.ProfileDto;
+import com.example.wagesystem.dto.resignation.ResignationDto;
 import com.example.wagesystem.service.AttendanceServiceImpl;
 import com.example.wagesystem.service.EmployeeServiceImpl;
 import io.swagger.annotations.ApiOperation;

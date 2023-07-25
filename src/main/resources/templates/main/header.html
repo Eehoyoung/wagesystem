@@ -10,6 +10,7 @@
             margin: 0;
             padding: 0;
         }
+
         .header {
             background-color: #87cefa;
             padding: 1rem;
@@ -29,7 +30,7 @@
     </style>
 </head>
 <body>
-<header th:fragment="main_headerFragment" class="header">
+<header class="header" th:fragment="main_headerFragment">
     <nav class="nav">
         <a class="logo" href="/main/index">근태관리 프로젝트</a>
         <a href="/main/login" sec:authorize="isAnonymous()">로그인</a>

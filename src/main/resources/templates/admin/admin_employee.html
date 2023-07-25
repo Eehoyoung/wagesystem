@@ -8,8 +8,10 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
     <link href="/css/admin/user.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0-alpha1/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KyZXEAg3QhqLMpG8r+Knujsl5/1Rw2ogJ59As5skc5vQODIX0p6evz9B3oUkMAD/" crossorigin="anonymous">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.0/css/all.min.css" rel="stylesheet" integrity="sha384-KyZXEAg3QhqLMpG8r+Knujsl5/1Rw2ogJ59As5skc5vQODIX0p6evz9B3oUkMAD/" crossorigin="anonymous">
+    <link crossorigin="anonymous" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0-alpha1/css/bootstrap.min.css"
+          integrity="sha384-KyZXEAg3QhqLMpG8r+Knujsl5/1Rw2ogJ59As5skc5vQODIX0p6evz9B3oUkMAD/" rel="stylesheet">
+    <link crossorigin="anonymous" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.0/css/all.min.css"
+          integrity="sha384-KyZXEAg3QhqLMpG8r+Knujsl5/1Rw2ogJ59As5skc5vQODIX0p6evz9B3oUkMAD/" rel="stylesheet">
     <script src="/js/jquery.js"></script>
 </head>
 <style>
@@ -54,96 +56,99 @@
             <nav th:replace="admin/admin_nav :: navFragment"></nav>
         </div>
         <div class="col-10 content-wrapper">
-<section>
-    <div class="item">
-        <div class="item-caption">
-            <div class="item-title">
-                <h1><strong>사원 정보</strong></h1>
-            </div>
-        </div>
-        <div class="item-content">
-            <table>
-                <colgroup>
-                    <col width="15%"/>
-                    <col width="85%"/>
-                </colgroup>
-                <tr>
-                    <th>사원번호</th>
-                    <td th:text="${employee.employeeId}">1</td>
-                </tr>
-                <tr>
-                    <th>이름</th>
-                    <td th:text="${employee.name}">홍길동</td>
-                </tr>
-                <tr>
-                    <th>생년월일</th>
-                    <td th:text="${employee.birthday}">1994-04-06</td>
-                </tr>
-                <tr>
-                    <th>입사일</th>
-                    <td th:text="${employee.hireDate}">남자</td>
-                </tr>
-                <tr>
-                    <th>휴대전화</th>
-                    <td th:text="${#strings.replace(employee.phoneNumber, ',', '-')}">010-1234-5678</td>
-                </tr>
-                <tr>
-                    <th>긴급전화</th>
-                    <td th:text="${#strings.replace(employee.emPhoneNumber, ',', '-')}">010-1234-5678</td>
-                </tr>
-            </table>
-        </div>
-    </div>
+            <section>
+                <div class="item">
+                    <div class="item-caption">
+                        <div class="item-title">
+                            <h1><strong>사원 정보</strong></h1>
+                        </div>
+                    </div>
+                    <div class="item-content">
+                        <table>
+                            <colgroup>
+                                <col width="15%"/>
+                                <col width="85%"/>
+                            </colgroup>
+                            <tr>
+                                <th>사원번호</th>
+                                <td th:text="${employee.employeeId}">1</td>
+                            </tr>
+                            <tr>
+                                <th>이름</th>
+                                <td th:text="${employee.name}">홍길동</td>
+                            </tr>
+                            <tr>
+                                <th>생년월일</th>
+                                <td th:text="${employee.birthday}">1994-04-06</td>
+                            </tr>
+                            <tr>
+                                <th>입사일</th>
+                                <td th:text="${employee.hireDate}">남자</td>
+                            </tr>
+                            <tr>
+                                <th>휴대전화</th>
+                                <td th:text="${#strings.replace(employee.phoneNumber, ',', '-')}">010-1234-5678</td>
+                            </tr>
+                            <tr>
+                                <th>긴급전화</th>
+                                <td th:text="${#strings.replace(employee.emPhoneNumber, ',', '-')}">010-1234-5678</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
 
-    <div class="item">
-        <div class="item-caption">
-            <div class="item-title">
-                <h1><strong>급여 정보</strong></h1>
-            </div>
-        </div>
-        <div class="item-content">
-            <table>
-                <thead>
-                <tr>
-                    <th>이름(사번)</th>
-                    <th>급여 No</th>
-                    <th>근무일</th>
-                    <th>근무 요일</th>
-                    <th>근무 시작 시간</th>
-                    <th>근무 종료 시간</th>
-                    <th>총 근무 시간</th>
-                    <th>일 급여</th>
-                    <th>주휴수당</th>
-                    <th>보너스</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr th:each="att : ${attList}">
-                    <td th:text="${att.employeeName} + '(' + ${att.employeeId} + ')'">홍길동(1)</td>
-                    <td th:text="${att.attendanceId}">1</td>
-                    <td th:text="${#temporals.format(att.workDay, 'yyyy-MM-dd')}">yyyy-MM-dd</td>
-                    <td th:text="${att.dayOfWeek}">금요일</td>
-                    <td th:text="${#temporals.format(att.startTime,'yyyy-MM-dd HH:mm:ss')}">09:00</td>
-                    <td th:text="${#temporals.format(att.endTime,'yyyy-MM-dd HH:mm:ss')}">18:00</td>
-                    <td th:text="${att.workTime}">7시간</td>
+                <div class="item">
+                    <div class="item-caption">
+                        <div class="item-title">
+                            <h1><strong>급여 정보</strong></h1>
+                        </div>
+                    </div>
+                    <div class="item-content">
+                        <table>
+                            <thead>
+                            <tr>
+                                <th>이름(사번)</th>
+                                <th>급여 No</th>
+                                <th>근무일</th>
+                                <th>근무 요일</th>
+                                <th>근무 시작 시간</th>
+                                <th>근무 종료 시간</th>
+                                <th>총 근무 시간</th>
+                                <th>일 급여</th>
+                                <th>주휴수당</th>
+                                <th>보너스</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="att : ${attList}">
+                                <td th:text="${att.employeeName} + '(' + ${att.employeeId} + ')'">홍길동(1)</td>
+                                <td th:text="${att.attendanceId}">1</td>
+                                <td th:text="${#temporals.format(att.workDay, 'yyyy-MM-dd')}">yyyy-MM-dd</td>
+                                <td th:text="${att.dayOfWeek}">금요일</td>
+                                <td th:text="${#temporals.format(att.startTime,'yyyy-MM-dd HH:mm:ss')}">09:00</td>
+                                <td th:text="${#temporals.format(att.endTime,'yyyy-MM-dd HH:mm:ss')}">18:00</td>
+                                <td th:text="${att.workTime}">7시간</td>
 
-                    <td th:text="${#numbers.formatDecimal(att.dailyWage, 0, 'COMMA', 0, 'POINT')}">1,000원</td>
-                    <td th:text="${#numbers.formatDecimal(att.weeklyAllowance, 0, 'COMMA', 0, 'POINT')}">10,000원</td>
-                    <td th:text="${#numbers.formatDecimal(att.bonus, 0, 'COMMA', 0, 'POINT')}">1,000원</td>
-                </tr>
-                </tbody>
-                </tbody>
-            </table>
-        </div>
-    </div>
+                                <td th:text="${#numbers.formatDecimal(att.dailyWage, 0, 'COMMA', 0, 'POINT')}">1,000원
+                                </td>
+                                <td th:text="${#numbers.formatDecimal(att.weeklyAllowance, 0, 'COMMA', 0, 'POINT')}">
+                                    10,000원
+                                </td>
+                                <td th:text="${#numbers.formatDecimal(att.bonus, 0, 'COMMA', 0, 'POINT')}">1,000원</td>
+                            </tr>
+                            </tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
 
 
-    <div class="bottom">
-        <div class="bottombtn">
-            <input onclick="history.back()" type="button" value="뒤로가기">
-        </div>
-    </div>
-</section>
+                <div class="bottom">
+                    <div class="bottombtn">
+                        <input onclick="history.back()" type="button" value="뒤로가기">
+                    </div>
+                </div>
+            </section>
         </div>
     </div>
 </div>

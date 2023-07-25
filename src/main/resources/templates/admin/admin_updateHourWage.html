@@ -1,17 +1,17 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-  <meta charset="UTF-8">
-  <title>Update Hourly Wage</title>
+    <meta charset="UTF-8">
+    <title>Update Hourly Wage</title>
 </head>
 <body>
 <h1>사원 시급 변경</h1>
-<form th:action="@{/admin/update-hourly-wage}" th:object="${employeeHourlyWageDto}" method="post">
-  <label for="id">사원번호:</label>
-  <input type="text" id="id" name="id" required/><br/>
-  <label for="hourWage">변경할 시급:</label>
-  <input type="number" id="hourWage" name="hourWage" step="0.01" required/><br/>
-  <input type="submit" value="확인"/>
+<form method="post" th:action="@{/admin/update-hourly-wage}" th:object="${employeeHourlyWageDto}">
+    <label for="id">사원번호:</label>
+    <input id="id" name="id" required type="text"/><br/>
+    <label for="hourWage">변경할 시급:</label>
+    <input id="hourWage" name="hourWage" required step="0.01" type="number"/><br/>
+    <input type="submit" value="확인"/>
 </form>
 </body>
 </html>

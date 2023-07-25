@@ -4,24 +4,23 @@ import com.example.wagesystem.domain.Attendance;
 import com.example.wagesystem.domain.Employee;
 import com.example.wagesystem.domain.SearchEmployee;
 import com.example.wagesystem.domain.SearchResignation;
-import com.example.wagesystem.dto.*;
 import com.example.wagesystem.dto.attendance.AttendanceDto;
+import com.example.wagesystem.dto.attendance.AttendanceMissDto;
+import com.example.wagesystem.dto.employee.*;
+import com.example.wagesystem.dto.resignation.ResignationEmpDto;
 import com.example.wagesystem.service.AdminServiceImpl;
-import javassist.tools.rmi.ObjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 
 import java.math.BigDecimal;
-import java.security.Principal;
 import java.util.List;
 
 @Controller
@@ -128,8 +127,8 @@ public class AdminController {
 
     @PostMapping("/fix/attendance")
     public String insertOrUpdateStartTime(@ModelAttribute AttendanceMissDto attendanceMissDto, Model model, EmployeeInfoDto employeeInfoDto) {
-        Attendance attendance = adminService.insertOrUpdateStartTime(attendanceMissDto,employeeInfoDto);
-        model.addAttribute("message", "사원번호: " + attendance.getEmployee().getEmployeeId() +"의 근무 이력이 정상적으로 입력되었습니다.");
+        Attendance attendance = adminService.insertOrUpdateStartTime(attendanceMissDto, employeeInfoDto);
+        model.addAttribute("message", "사원번호: " + attendance.getEmployee().getEmployeeId() + "의 근무 이력이 정상적으로 입력되었습니다.");
         return "admin/admin_attendance_result";
     }
 }

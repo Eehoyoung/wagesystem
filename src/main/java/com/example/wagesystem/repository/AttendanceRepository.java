@@ -36,6 +36,7 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Long>, Q
 
     @Query("SELECT SUM(a.dailyWage) FROM Attendance a WHERE a.workDay >= :startDate AND a.workDay < :endDate")
     BigDecimal getTotalWageByDate(@Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
+
     @Query("select a from Attendance a where a.employee.employeeId = :employeeId")
     List<Attendance> findAttendanceByEmployee(@Param("employeeId") Long employeeId);
 

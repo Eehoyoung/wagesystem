@@ -1,44 +1,54 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"  xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="en">
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <meta content="IE=edge" http-equiv="X-UA-Compatible">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <link href="https://fonts.gstatic.com" rel="preconnect">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Antonio&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.3/css/all.css" integrity="sha384-SZXxX4whJ79/gErwcOYf+zWLeJdY/qpuqC4cAa9rOGUstPomtqpuNWT9wdPEn2fk" crossorigin="anonymous">
-<!--    <link rel="stylesheet" href="/js/css/mypage.css">-->
+    <link crossorigin="anonymous" href="https://use.fontawesome.com/releases/v5.15.3/css/all.css"
+          integrity="sha384-SZXxX4whJ79/gErwcOYf+zWLeJdY/qpuqC4cAa9rOGUstPomtqpuNWT9wdPEn2fk" rel="stylesheet">
+    <!--    <link rel="stylesheet" href="/js/css/mypage.css">-->
     <title>mypage</title>
     <script src="/js/jquery.js"></script>
 </head>
 <body>
-    <!--header start-->
-    <header th:replace="main/header :: main_headerFragment">
-    </header>
-    <!--header end-->
+<!--header start-->
+<header th:replace="main/header :: main_headerFragment">
+</header>
+<!--header end-->
 
-    <!--section-->
-    <section>
+<!--section-->
+<section>
+    <div>
+        MY PAGE
+    </div>
+    <div>
         <div>
-            MY PAGE
-        </div>
-        <div>
+            <div>귀하의 노고에 감사드립니다. <b th:text="${employee.name}"> 홍길동</b> 님은 <b sec:authorize="hasRole('ROLE_STAFF')">[STAFF]</b><b
+                    sec:authorize="hasRole('ROLE_DEFUTY')">[부점장]</b> 이십니다
+            </div>
             <div>
-                <div>귀하의 노고에 감사드립니다. <b th:text="${employee.name}"> 홍길동</b> 님은 <b sec:authorize="hasRole('ROLE_STAFF')">[STAFF]</b><b sec:authorize="hasRole('ROLE_DEFUTY')">[부점장]</b> 이십니다</div>
-                <div >
-                    누적급여&nbsp;&nbsp;&nbsp;<b>></b>&nbsp;&nbsp;&nbsp;<b th:text="${#numbers.formatInteger(employee.pay, 0, 'COMMA')} + '원'">10,000원</b>&nbsp;&nbsp;&nbsp;<button onclick="location.href='#'" th:onclick="'location.href=\''+ @{/main/wage} + '\''">조회</button>
-                </div>
-                <div >
-                    시급&nbsp;&nbsp;&nbsp;<b>></b>&nbsp;&nbsp;&nbsp;<b th:text="${#numbers.formatInteger(employee.hourWage, 0, 'COMMA')} + '원'">10,000원</b>&nbsp;&nbsp;&nbsp;<button onclick="location.href='#'" th:onclick="'location.href=\''+ @{/main/wage} + '\''">조회</button>
-                </div>
+                누적급여&nbsp;&nbsp;&nbsp;<b>></b>&nbsp;&nbsp;&nbsp;<b
+                    th:text="${#numbers.formatInteger(employee.pay, 0, 'COMMA')} + '원'">10,000원</b>&nbsp;&nbsp;&nbsp;<button
+                    onclick="location.href='#'" th:onclick="'location.href=\''+ @{/main/wage} + '\''">조회
+            </button>
+            </div>
+            <div>
+                시급&nbsp;&nbsp;&nbsp;<b>></b>&nbsp;&nbsp;&nbsp;<b
+                    th:text="${#numbers.formatInteger(employee.hourWage, 0, 'COMMA')} + '원'">10,000원</b>&nbsp;&nbsp;&nbsp;<button
+                    onclick="location.href='#'" th:onclick="'location.href=\''+ @{/main/wage} + '\''">조회
+            </button>
             </div>
         </div>
+    </div>
 
-    </section>
-    <!--footer-->
-    <footer th:replace="main/footer :: main_footerFragment">
-    </footer>
+</section>
+<!--footer-->
+<footer th:replace="main/footer :: main_footerFragment">
+</footer>
 
 </body>
 </html>

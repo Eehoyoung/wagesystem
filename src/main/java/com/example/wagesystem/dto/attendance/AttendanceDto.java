@@ -1,12 +1,10 @@
 package com.example.wagesystem.dto.attendance;
 
-import com.example.wagesystem.domain.Employee;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.sql.Time;
-import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 

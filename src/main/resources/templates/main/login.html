@@ -18,6 +18,7 @@
             background-color: #d9e8f8;
             font-family: 'Noto Sans KR', sans-serif;
         }
+
         form.loginform {
             text-align: center;
             background-color: #f1f8fd;
@@ -28,6 +29,7 @@
             box-shadow: 0px 4px 16px 0 rgba(45, 49, 66, 0.1);
             border-radius: 8px;
         }
+
         .login_caption {
             margin-top: 10px;
             margin-bottom: 30px;
@@ -36,6 +38,7 @@
             color: #5797ff;
             font-size: 36px;
         }
+
         .login_inputs input[type="text"],
         .login_inputs input[type="password"] {
             border: 1px solid #cae2ff;
@@ -47,11 +50,13 @@
             margin-bottom: 15px;
             padding: 0 10px;
         }
+
         .login_inputs input[type="text"]:focus,
         .login_inputs input[type="password"]:focus {
             outline: none;
             border-color: #a0c2f1;
         }
+
         .loginbtn_box input[type="submit"] {
             background-color: #5797ff;
             width: 70%;
@@ -62,14 +67,17 @@
             cursor: pointer;
             border: none;
         }
+
         .login_bottom a {
             text-decoration: none;
             color: #4a4a4a;
             transition: color .3s;
         }
+
         .login_bottom a:hover {
             color: #5797ff;
         }
+
         .login_bottom i {
             padding: 0 5px;
         }
@@ -82,7 +90,7 @@
 </head>
 <body>
 <!--header start-->
-<header th:replace="~{main/header :: main_headerFragment}" class="center-aligned">
+<header class="center-aligned" th:replace="~{main/header :: main_headerFragment}">
 </header>
 <!--header end-->
 
@@ -117,7 +125,7 @@
 
 
 <!--footer-->
-<footer th:replace="~{main/footer :: main_footerFragment}" class="center-aligned">
+<footer class="center-aligned" th:replace="~{main/footer :: main_footerFragment}">
 </footer>
 </body>
 </html>

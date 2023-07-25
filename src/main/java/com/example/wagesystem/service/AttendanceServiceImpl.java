@@ -21,7 +21,10 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.Time;
 import java.time.*;
-import java.util.*;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -107,7 +110,7 @@ public class AttendanceServiceImpl implements AttendanceService {
 
     @Override
     public boolean findAllEmployeeId(Long employeeId) {
-        return employeeRepository.findBySeachAllId(employeeId) != null;
+        return employeeRepository.findBySearchAllId(employeeId) != null;
     }
 
     @Override

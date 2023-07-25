@@ -24,14 +24,14 @@ public class LoginSuccessHandler extends SavedRequestAwareAuthenticationSuccessH
             String redirectUrl = (String) session.getAttribute("prevPage");
             Set<String> authorities = AuthorityUtils.authorityListToSet(authentication.getAuthorities());
             System.out.println("직급은? = " + authorities);
-            if(authorities.contains("ROLE_MANAGER")){
+            if (authorities.contains("ROLE_MANAGER")) {
                 return "/admin/main";
             }
             if (redirectUrl != null) {
                 session.removeAttribute("prevPage");
                 return redirectUrl; // 이전 페이지로 리디렉션
             } else {
-               if (authorities.contains("ROLE_USER")) {
+                if (authorities.contains("ROLE_USER")) {
                     System.out.println("아 설마");
                     return "/main/index"; // 일반 사용자로 로그인한 경우 사용자용 첫 화면으로 리디렉션
                 }
