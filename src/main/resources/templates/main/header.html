@@ -6,32 +6,32 @@
     <meta charset="UTF-8">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
         .header {
             background-color: #87cefa;
             padding: 1rem;
-        }
-
-        .logo {
-            display: inline-block;
-            margin-right: 2rem;
+            display: flex;
+            justify-content: center;
         }
 
         .nav {
-            display: inline-block;
+            display: flex;
+            gap: 2rem;
         }
 
         .nav a {
-            margin-right: 1rem;
             text-decoration: none;
             color: white;
         }
     </style>
-
 </head>
 <body>
-<header th:fragment="main_headerFragment">
-    <a class="logo" href="/main/index">근태관리 프로젝트</a>
+<header th:fragment="main_headerFragment" class="header">
     <nav class="nav">
+        <a class="logo" href="/main/index">근태관리 프로젝트</a>
         <a href="/main/login" sec:authorize="isAnonymous()">로그인</a>
         <a href="/main/register" sec:authorize="isAnonymous()"> 회원가입 </a>
         <a href="/main/mypage" sec:authorize="isAuthenticated()">마이페이지</a>

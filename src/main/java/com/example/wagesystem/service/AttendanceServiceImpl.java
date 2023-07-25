@@ -21,10 +21,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.Time;
 import java.time.*;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -250,8 +247,7 @@ public class AttendanceServiceImpl implements AttendanceService {
     }
 
     // 주휴 수당을 계산하는 스케줄러
-//    @Scheduled(cron = "0 40 23 * * ?")
-    @Scheduled(cron = "0/5 * * * * *")
+    @Scheduled(cron = "0 40 23 * * ?")
     @Transactional
     public void calculateWeeklyAllowances() throws ObjectNotFoundException {
         List<Employee> employees = employeeRepository.findAll();
@@ -272,13 +268,18 @@ public class AttendanceServiceImpl implements AttendanceService {
 
         List<Attendance> attendances = findAttendancesBetweenDates(employee);
         BigDecimal weeklyHours = calculateWeeklyHours(attendances);
+        System.out.println(weeklyHours);
+
+        if (weeklyHours.compareTo(new BigDecimal(15)) < 0) {
+            return;
+        }
 
         BigDecimal weeklyAllowance = employee.calculateWeeklyAllowance(weeklyHours);
 
         if (isCarriedOverWeek(startDate, endDate, now)) {
-            employee.setIncompleteWeekAllowance(weeklyAllowance);
-        } else if (endDate.equals(now)) {
             saveWeeklyAllowanceAndUpdateDates(employee, endDate, weeklyAllowance);
+        } else if (endDate.equals(now)) {
+            employee.setIncompleteWeekAllowance(weeklyAllowance);
         }
     }
 
@@ -335,7 +336,8 @@ public class AttendanceServiceImpl implements AttendanceService {
 
     // 직원 ID로 직원 검색
     private Employee findEmployeeById(Long employeeId) throws ObjectNotFoundException {
-        return employeeRepository.findById(employeeId).orElseThrow(() -> new ObjectNotFoundException("해당하는 사원이 존재하지 않습니다."));
+        return employeeRepository.findById(employeeId).orElseThrow(
+                () -> new ObjectNotFoundException("해당하는 사원이 존재하지 않습니다."));
     }
 }
 

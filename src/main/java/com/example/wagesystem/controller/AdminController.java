@@ -4,23 +4,23 @@ import com.example.wagesystem.domain.Attendance;
 import com.example.wagesystem.domain.Employee;
 import com.example.wagesystem.domain.SearchEmployee;
 import com.example.wagesystem.domain.SearchResignation;
-import com.example.wagesystem.dto.DailyWageDto;
-import com.example.wagesystem.dto.EmployeeDto;
-import com.example.wagesystem.dto.EmployeePageDto;
-import com.example.wagesystem.dto.ResignationEmpDto;
+import com.example.wagesystem.dto.*;
 import com.example.wagesystem.dto.attendance.AttendanceDto;
-import com.example.wagesystem.dto.attendance.AttendanceInfoDto;
 import com.example.wagesystem.service.AdminServiceImpl;
+import javassist.tools.rmi.ObjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
+import java.security.Principal;
 import java.util.List;
 
 @Controller
@@ -105,5 +105,20 @@ public class AdminController {
 
         return "admin/admin_reEmpList";
     }
+
+    @GetMapping("/admin/update-hourly-wage")
+    public String showUpdateHourlyWageForm(Model model) {
+        model.addAttribute("employeeHourlyWageDto", new EmployeeHourlyWageDto());
+        return "admin/admin_updateHourWage";
+    }
+
+    @PostMapping("/admin/update-hourly-wage")
+    public String updateHourlyWage(@ModelAttribute EmployeeHourlyWageDto employeeHourlyWageDto, Model model) {
+        Employee updatedEmployee = adminService.updateHourlyWage(employeeHourlyWageDto.getId(), employeeHourlyWageDto.getHourWage());
+        System.out.println("바뀐 시급은?  " + employeeHourlyWageDto.getHourWage());
+        model.addAttribute("message", "사원번호: " + updatedEmployee.getEmployeeId() + "의 시급이 " + updatedEmployee.getHourwage() + "로 변경되었습니다.");
+        return "admin/admin_message";
+    }
+
 }
 

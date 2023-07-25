@@ -1,0 +1,34 @@
+
+body {
+    font-family: 'Noto Sans KR', sans-serif;
+    background-color: #e6f0f5;
+}
+
+.section_caption {
+    margin-top: 30px;
+    font-size: 24px;
+    color: #1076a7;
+    font-weight: bold;
+    text-align: center;
+}
+
+.bottombtn_box {
+    text-align: center;
+    margin-top: 30px;
+}
+
+.registerbtn {
+    padding: 10px 20px;
+    background-color: #1076a7;
+    border: none;
+    font-size: 14px;
+    color: white;
+}
+
+.registerbtn:hover {
+    background-color: #167eae;
+    cursor: pointer;
+
+
+
+}

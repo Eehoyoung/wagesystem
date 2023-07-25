@@ -173,6 +173,23 @@ public class AdminServiceImpl implements AdminService {
         return employeePageDto;
     }
 
+
+    @Override
+    @Transactional
+    public Employee updateHourlyWage(Long employeeId, BigDecimal hourlyWage) {
+        Employee employee = employeeRepository.findById(employeeId)
+                .orElseThrow(() -> new IllegalArgumentException("해당하는 사원이 없습니다."));
+
+        employee.setHourwage(hourlyWage);
+        return employeeRepository.save(employee);
+    }
+
+    @Override
+    @Transactional
+    public Employee saveEmployee(Employee employee) {
+        return employeeRepository.save(employee);
+    }
+
     @Transactional
     public BigDecimal getTotalMonthlyWagesByEmployee() {
         LocalDate currentDate = LocalDate.now();

@@ -1,9 +1,8 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
-
 <head>
     <meta charset="UTF-8">
-    <meta content="width-width, initial-scale=1.0" name="viewport">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <style>
         .footer {
             background-color: #beffcc;
@@ -15,13 +14,12 @@
         }
 
         p {
-            margin: 0;
             font-size: 16px;
         }
     </style>
 </head>
 <body>
-<footer th:fragment="main_footerFragment">
+<footer th:fragment="main_footerFragment" class="footer">
     <p>정보처리책임자: 홍길동</p>
     <p>전화번호: 010-1234-5678</p>
 </footer>

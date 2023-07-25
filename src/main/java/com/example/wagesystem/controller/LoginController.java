@@ -18,8 +18,12 @@ import javax.servlet.http.HttpServletRequest;
 @RequiredArgsConstructor
 public class LoginController {
 
-    @Autowired
     private EmployeeServiceImpl employeeService;
+
+    @Autowired
+    public LoginController(EmployeeServiceImpl employeeService) {
+        this.employeeService = employeeService;
+    }
 
     @ApiOperation("로그인")
     @GetMapping("/main/login")
@@ -48,7 +52,6 @@ public class LoginController {
     @PostMapping("main/register")
     public String doRegisterPage(EmployeeInfoDto employeeInfoDto) {
         Long memberId = employeeService.joinEmployee(employeeInfoDto);
-
 
         return "redirect:/main/login";
     }

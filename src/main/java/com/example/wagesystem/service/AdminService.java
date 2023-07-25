@@ -7,7 +7,7 @@ import com.example.wagesystem.domain.SearchResignation;
 import com.example.wagesystem.dto.DailyWageDto;
 import com.example.wagesystem.dto.EmployeePageDto;
 import com.example.wagesystem.dto.attendance.AttendanceDto;
-import com.example.wagesystem.dto.attendance.AttendanceInfoDto;
+import javassist.tools.rmi.ObjectNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,4 +37,8 @@ public interface AdminService {
     EmployeePageDto findAllReEmployeeByPaging(Pageable pageable);
 
     EmployeePageDto findAllReEmployeeByConditionByPaging(SearchResignation searchResignation, Pageable pageable);
+
+    Employee updateHourlyWage(Long employeeId, BigDecimal newHourlyWage) throws ObjectNotFoundException;
+
+    Employee saveEmployee(Employee employee);
 }
