@@ -182,10 +182,10 @@ public class AttendanceServiceImpl implements AttendanceService {
     @Override
     public void updateAttendance(Long attendanceId, AttendanceInfoDto AttendanceInfoDto) {
         Attendance attendance = attendanceRepository.findById(attendanceId)
-                .orElseThrow(() -> new RuntimeException("Attendance not found"));
+                .orElseThrow(() -> new RuntimeException("해당 근무기록을 찾을 수 없습니다."));
 
         Employee employee = employeeRepository.findById(AttendanceInfoDto.getEmployeeId())
-                .orElseThrow(() -> new RuntimeException("Employee not found"));
+                .orElseThrow(() -> new RuntimeException("해당 사원을 찾을 수 없습니다."));
 
         attendance.setEmployee(employee);
         attendance.setStartTime(AttendanceInfoDto.getStartTime());

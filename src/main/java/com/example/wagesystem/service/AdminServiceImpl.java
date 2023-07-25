@@ -4,10 +4,7 @@ import com.example.wagesystem.domain.Attendance;
 import com.example.wagesystem.domain.Employee;
 import com.example.wagesystem.domain.SearchEmployee;
 import com.example.wagesystem.domain.SearchResignation;
-import com.example.wagesystem.dto.DailyWageDto;
-import com.example.wagesystem.dto.EmployeeDto;
-import com.example.wagesystem.dto.EmployeePageDto;
-import com.example.wagesystem.dto.ResignationEmpDto;
+import com.example.wagesystem.dto.*;
 import com.example.wagesystem.dto.attendance.AttendanceDto;
 import com.example.wagesystem.exception.LoginIdNotFoundException;
 import com.example.wagesystem.repository.AttendanceRepository;
@@ -16,10 +13,12 @@ import com.example.wagesystem.repository.ResignationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.time.format.TextStyle;
@@ -33,12 +32,14 @@ public class AdminServiceImpl implements AdminService {
     private final EmployeeRepository employeeRepository;
     private final AttendanceRepository attendanceRepository;
     private final ResignationRepository resignationRepository;
+    private final AttendanceServiceImpl attendanceService;
 
     @Autowired
-    public AdminServiceImpl(EmployeeRepository employeeRepository, AttendanceRepository attendanceRepository, ResignationRepository resignationRepository) {
+    public AdminServiceImpl(EmployeeRepository employeeRepository, AttendanceRepository attendanceRepository, ResignationRepository resignationRepository, AttendanceServiceImpl attendanceService) {
         this.employeeRepository = employeeRepository;
         this.attendanceRepository = attendanceRepository;
         this.resignationRepository = resignationRepository;
+        this.attendanceService = attendanceService;
     }
 
 
@@ -190,6 +191,27 @@ public class AdminServiceImpl implements AdminService {
         return employeeRepository.save(employee);
     }
 
+    @Override
+    public Attendance insertOrUpdateStartTime(AttendanceMissDto attendanceMissDto) {
+        Attendance attendance = new Attendance();
+
+        Employee findEmployee = employeeRepository.findById(attendanceMissDto.getEmployeeId()).orElseThrow(
+                () -> new IllegalArgumentException("해당 사원을 찾을 수 없습니다.")
+        );
+        attendance.setEmployee(findEmployee);
+        attendance.setStartTime(attendanceMissDto.getStartTime());
+        attendance.setEndTime(attendanceMissDto.getEndTime());
+        attendance.setWeeklyAllowance(new BigDecimal(BigInteger.ZERO));
+        attendance.setBonus(new BigDecimal(BigInteger.ZERO));
+        attendance.setWorkDay(attendanceMissDto.getWorkDay());
+        attendance.setWorkTime(attendanceService.calculationSetWorkTime(attendanceMissDto.getStartTime(), attendanceMissDto.getEndTime()));
+        attendance.setDailyWage(attendanceService.calculattionDailyWage(
+                attendanceService.calculationWorkTime(attendanceMissDto.getStartTime(), attendanceMissDto.getEndTime()),
+                attendanceRepository.findHourWageByEmployeeId(attendanceMissDto.getEmployeeId())));
+
+        return attendanceRepository.save(attendance);
+    }
+
     @Transactional
     public BigDecimal getTotalMonthlyWagesByEmployee() {
         LocalDate currentDate = LocalDate.now();
@@ -212,5 +234,8 @@ public class AdminServiceImpl implements AdminService {
         return totalWages;
     }
 
+    @Scheduled(cron = "0 0 0 * * ?")
+    public void insertEndWork() {
 
+    }
 }

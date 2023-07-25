@@ -4,6 +4,7 @@ import com.example.wagesystem.domain.Attendance;
 import com.example.wagesystem.domain.Employee;
 import com.example.wagesystem.domain.SearchEmployee;
 import com.example.wagesystem.domain.SearchResignation;
+import com.example.wagesystem.dto.AttendanceMissDto;
 import com.example.wagesystem.dto.DailyWageDto;
 import com.example.wagesystem.dto.EmployeePageDto;
 import com.example.wagesystem.dto.attendance.AttendanceDto;
@@ -13,6 +14,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface AdminService {
@@ -41,4 +44,6 @@ public interface AdminService {
     Employee updateHourlyWage(Long employeeId, BigDecimal newHourlyWage) throws ObjectNotFoundException;
 
     Employee saveEmployee(Employee employee);
+
+    Attendance insertOrUpdateStartTime(AttendanceMissDto attendanceMissDto);
 }

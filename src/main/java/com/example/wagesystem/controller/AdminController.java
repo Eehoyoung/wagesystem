@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -115,10 +116,21 @@ public class AdminController {
     @PostMapping("/admin/update-hourly-wage")
     public String updateHourlyWage(@ModelAttribute EmployeeHourlyWageDto employeeHourlyWageDto, Model model) {
         Employee updatedEmployee = adminService.updateHourlyWage(employeeHourlyWageDto.getId(), employeeHourlyWageDto.getHourWage());
-        System.out.println("바뀐 시급은?  " + employeeHourlyWageDto.getHourWage());
         model.addAttribute("message", "사원번호: " + updatedEmployee.getEmployeeId() + "의 시급이 " + updatedEmployee.getHourwage() + "로 변경되었습니다.");
         return "admin/admin_message";
     }
 
+    @GetMapping("/fix/attendance")
+    public String attendanceForm(Model model) {
+        model.addAttribute("attendanceMissDto", new AttendanceMissDto());
+        return "admin/admin_attendance_form";
+    }
+
+    @PostMapping("/fix/attendance")
+    public String insertOrUpdateStartTime(@ModelAttribute AttendanceMissDto attendanceMissDto, Model model) {
+        Attendance attendance = adminService.insertOrUpdateStartTime(attendanceMissDto);
+        model.addAttribute("message", "사원번호: " + attendance.getEmployee().getEmployeeId() +"의 근무 이력이 정상적으로 입력되었습니다.");
+        return "admin/admin_attendance_result";
+    }
 }
 
