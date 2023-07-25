@@ -6,10 +6,12 @@ import com.example.wagesystem.domain.SearchEmployee;
 import com.example.wagesystem.domain.SearchResignation;
 import com.example.wagesystem.dto.*;
 import com.example.wagesystem.dto.attendance.AttendanceDto;
+import com.example.wagesystem.dto.attendance.AttendanceInfoDto;
 import com.example.wagesystem.exception.LoginIdNotFoundException;
 import com.example.wagesystem.repository.AttendanceRepository;
 import com.example.wagesystem.repository.EmployeeRepository;
 import com.example.wagesystem.repository.ResignationRepository;
+import javassist.tools.rmi.ObjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -20,6 +22,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.YearMonth;
 import java.time.format.TextStyle;
 import java.util.ArrayList;
@@ -33,13 +37,15 @@ public class AdminServiceImpl implements AdminService {
     private final AttendanceRepository attendanceRepository;
     private final ResignationRepository resignationRepository;
     private final AttendanceServiceImpl attendanceService;
+    private final EmployeeServiceImpl employeeService;
 
     @Autowired
-    public AdminServiceImpl(EmployeeRepository employeeRepository, AttendanceRepository attendanceRepository, ResignationRepository resignationRepository, AttendanceServiceImpl attendanceService) {
+    public AdminServiceImpl(EmployeeRepository employeeRepository, AttendanceRepository attendanceRepository, ResignationRepository resignationRepository, AttendanceServiceImpl attendanceService, EmployeeServiceImpl employeeService) {
         this.employeeRepository = employeeRepository;
         this.attendanceRepository = attendanceRepository;
         this.resignationRepository = resignationRepository;
         this.attendanceService = attendanceService;
+        this.employeeService = employeeService;
     }
 
 
@@ -234,8 +240,36 @@ public class AdminServiceImpl implements AdminService {
         return totalWages;
     }
 
-    @Scheduled(cron = "0 0 0 * * ?")
-    public void insertEndWork() {
+    @Scheduled(cron = "0 30 23 * * ?")
+    @Transactional
+    public void autoInsertEndWork(AttendanceInfoDto attendanceInfoDto, EmployeeInfoDto employeeInfoDto) {
+        // 퇴근 처리가 안된 출석체크 기록을 찾습니다.
+        List<Attendance> attendances = attendanceRepository.findAttendanceWithoutEndTime();
+        LocalDateTime endTime = LocalDateTime.of(LocalDate.now(), LocalTime.of(22, 0));
 
+        for (Attendance attendance : attendances) {
+            if (attendance.getWorkTime() != null) {
+                attendanceInfoDto.setAttendanceId(attendance.getAttendanceId());
+                attendanceInfoDto.setEndTime(endTime); // 퇴근 시간 입력
+                attendanceInfoDto.setStartTime(attendance.getStartTime()); //출근 시간 set
+                attendanceInfoDto.setWorkTime(attendanceService.calculationSetWorkTime(attendance.getStartTime(), endTime)); // 총 근무 시간 입력
+                attendanceInfoDto.setWeeklyAllowance(new BigDecimal(BigInteger.ZERO));
+                attendanceInfoDto.setBonus(new BigDecimal(BigInteger.ZERO));
+                attendanceInfoDto.setDailyWage(attendanceService.calculattionDailyWage(
+                        attendanceService.calculationWorkTime(attendance.getStartTime(), endTime),
+                        attendanceRepository.findHourWageByEmployeeId(attendance.getEmployee().getEmployeeId())));
+
+                attendanceService.updateAttendance(attendance.getAttendanceId(), attendanceInfoDto);
+
+                BigDecimal monthWage = attendanceService.calculateMonthWage(attendance.getEmployee().getEmployeeId());
+                employeeInfoDto.setMonthWage(monthWage);
+                try {
+                    employeeService.updateMonthWage(attendance.getEmployee().getEmployeeId(), employeeInfoDto);
+                } catch (ObjectNotFoundException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            attendanceRepository.save(attendance);
+        }
     }
 }
