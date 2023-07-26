@@ -231,6 +231,12 @@ public class AdminServiceImpl implements AdminService {
         return attendance;
     }
 
+    @Override
+    @Transactional
+    public void deleteAttendance(Long attendanceId) {
+        attendanceRepository.deleteById(attendanceId);
+    }
+
     @Transactional
     public BigDecimal getTotalMonthlyWagesByEmployee() {
         LocalDate currentDate = LocalDate.now();

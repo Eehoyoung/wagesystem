@@ -15,10 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -119,17 +116,31 @@ public class AdminController {
         return "admin/admin_message";
     }
 
-    @GetMapping("/fix/attendance")
+    @GetMapping("/admin/insert-attendance")
     public String attendanceForm(Model model) {
         model.addAttribute("attendanceMissDto", new AttendanceMissDto());
         return "admin/admin_attendance_form";
     }
 
-    @PostMapping("/fix/attendance")
+    @PostMapping("/admin/insert-attendance")
     public String insertOrUpdateStartTime(@ModelAttribute AttendanceMissDto attendanceMissDto, Model model, EmployeeInfoDto employeeInfoDto) {
         Attendance attendance = adminService.insertOrUpdateStartTime(attendanceMissDto, employeeInfoDto);
         model.addAttribute("message", "사원번호: " + attendance.getEmployee().getEmployeeId() + "의 근무 이력이 정상적으로 입력되었습니다.");
         return "admin/admin_attendance_result";
     }
+
+    @DeleteMapping("/admin/delete-attendance/{attendance_id}")
+    @ResponseBody
+    public String deleteAttendance(@PathVariable("attendance_id") Long attendanceId){
+        adminService.deleteAttendance(attendanceId);
+        System.out.println(attendanceId);
+        return "근무기록이 삭제 되었습니다.";
+    }
+
+    @GetMapping("/admin/delete-attendance")
+    public String deleteAttendance() {
+        return "admin/admin_delete_attendance";
+    }
+
 }
 

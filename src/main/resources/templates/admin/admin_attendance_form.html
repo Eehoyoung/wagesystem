@@ -6,7 +6,7 @@
 </head>
 <body>
 <h1>출근 처리</h1>
-<form method="post" th:action="@{/fix/attendance}" th:object="${attendanceMissDto}">
+<form method="post" th:action="@{/admin/insert-attendance}" th:object="${attendanceMissDto}">
     <div>
         <label for="employeeId">사원번호:</label>
         <input id="employeeId" name="employeeId" required type="number"/>

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="_csrf" th:content="${_csrf.token}"/>
+  <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+  <title>Ajax DELETE Example</title>
+  <script src="/js/jquery.js"></script>
+</head>
+<body>
+<h1>Delete Attendance</h1>
+<form id="deleteForm">
+  <label for="attendanceId">Attendance ID:</label>
+  <input type="number" id="attendanceId" name="attendanceId" required>
+  <button type="submit">근무기록 삭제</button>
+</form>
+
+<p id="result"></p>
+
+<script>
+  // 폼 제출 이벤트를 처리하고 preventDefault를 호출하여 페이지 새로 고침을 막습니다.
+  document.getElementById("deleteForm").addEventListener("submit", function(event) {
+    event.preventDefault();
+    const attendanceId = document.getElementById("attendanceId").value;
+    deleteAttendance(attendanceId);
+  });
+
+  const token = $("meta[name='_csrf']").attr("content");
+  const header = $("meta[name='_csrf_header']").attr("content");
+
+  // Ajax 통신을 사용하여 DELETE 요청을 보냅니다.
+  function deleteAttendance(attendanceId) {
+    // 백틱을 사용하는 템플릿 리터럴을 통해 변수를 URL에 삽입
+    const url = `/fix/delete-attendance/${attendanceId}`;
+
+    $.ajax({
+      url: url,
+      type: "DELETE",
+      data: {attendanceId: attendanceId},
+      beforeSend: function (xhr) {   /*데이터를 전송하기 전에 헤더에 csrf값을 설정한다*/
+        xhr.setRequestHeader(header, token);
+      }
+    }).done(function (word) {
+      $('#flag').val('true');
+      alert(word);
+    }).fail(function (error) {
+      alert(JSON.stringify(error));
+    })
+  }
+
+</script>
+</body>
+</html>

@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.util.List;
 
+
 public interface AdminService {
 
     Page<Employee> findAllEmployee(Pageable pageable);
@@ -45,4 +46,6 @@ public interface AdminService {
     Employee saveEmployee(Employee employee);
 
     Attendance insertOrUpdateStartTime(AttendanceMissDto attendanceMissDto, EmployeeInfoDto employeeInfoDto);
+
+    void deleteAttendance(Long attendanceId);
 }

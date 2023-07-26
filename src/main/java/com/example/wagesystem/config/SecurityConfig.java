@@ -32,7 +32,7 @@ public class SecurityConfig {
                 .authorizeRequests()
                 .antMatchers("/admin/**").hasRole("MANAGER")
                 .antMatchers("/main/pay", "/main/mypage").authenticated()
-                .antMatchers("/main/index", "/ch/**").permitAll()
+                .antMatchers("/main/index").permitAll()
                 .and()
                 .formLogin()
                 .loginPage("/main/login")

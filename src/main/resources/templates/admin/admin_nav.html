@@ -25,8 +25,11 @@
         <li class="menu-dropdown">
             <span>급여관리 <i class="fas fa-chevron-down"></i></span>
             <ul class="dropdown hide">
-                <li><a href="#" th:href="@{/admin/admin_updateHourWage}">사원 시급 변경</a></li>
-                <li><a href="#" th:href="@{/admin/itemList}">상품 목록</a></li>
+                <li><a href="#" th:href="@{/admin/update-hourly-wage}">사원 시급 변경</a></li>
+                <li><a href="#" th:href="@{/admin/insert-attendance}">근무기록 추가</a></li>
+                <li><a href="#" th:href="@{/admin/delete-attendance}">근무기록 삭제</a></li>
+                <li><a href="#" th:href="@{/admin/admin_updateHourWage}">근무기록 수정</a></li>
+                <li><a href="#" th:href="@{/admin/itemList}">급여 </a></li>
             </ul>
         </li>
         <li><a href='#' th:href="@{/admin/orderList}">주문관리</a></li>
