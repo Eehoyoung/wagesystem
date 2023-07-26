@@ -8,7 +8,6 @@ import com.example.wagesystem.dto.employee.EmployeeInfoDto;
 import com.example.wagesystem.exception.AttendanceException;
 import com.example.wagesystem.repository.AttendanceRepository;
 import com.example.wagesystem.repository.EmployeeRepository;
-import com.example.wagesystem.service.AdminServiceImpl;
 import com.example.wagesystem.service.AttendanceServiceImpl;
 import com.example.wagesystem.service.EmployeeServiceImpl;
 import io.swagger.annotations.ApiOperation;
@@ -46,34 +45,12 @@ public class AttendanceController {
         this.employeeService = employeeService;
     }
 
-    @ApiOperation("근태기록 조회(attendanceId 기반")
-    @GetMapping("/{attendanceId}")
-    public ResponseEntity<AttendanceInfoDto> getAttendanceById(@PathVariable Long attendanceId) {
-        AttendanceInfoDto attendanceInfoDto = attendanceService.getAttendanceById(attendanceId);
-        return ResponseEntity.ok(attendanceInfoDto);
-    }
-
     @ApiOperation("근태기록 리스트 출력")
     @GetMapping("/attendance/list")
     public ResponseEntity<List<AttendanceInfoDto>> getAllAttendances() {
         List<AttendanceInfoDto> attendances = attendanceService.getAllAttendances();
         return ResponseEntity.ok(attendances);
     }
-
-    @ApiOperation("근태기록 변경")
-    @PutMapping("/update/{attendanceId}")
-    public ResponseEntity<Void> updateAttendance(@PathVariable Long attendanceId, @RequestBody @Valid AttendanceInfoDto attendanceInfoDto) {
-        attendanceService.updateAttendance(attendanceId, attendanceInfoDto);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-    }
-
-    @ApiOperation("근태기록 삭제")
-    @DeleteMapping("/delete/{attendanceId}")
-    public ResponseEntity<Void> deleteAttendance(@PathVariable Long attendanceId) {
-        attendanceService.deleteAttendance(attendanceId);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-    }
-
 
     @ApiOperation("출근")
     @PostMapping("/start/{employeeId}")
@@ -114,7 +91,13 @@ public class AttendanceController {
             if (attendance.getEndTime() == null) {
                 LocalDateTime endTime = LocalDateTime.now();
 
-                AdminServiceImpl.createAttendanceInfo(endTime, attendance, attendanceInfoDto, attendanceService);
+                attendanceInfoDto.setAttendanceId(attendance.getAttendanceId());
+
+                attendanceInfoDto.setEndTime(endTime); // 퇴근 시간 입력
+                attendanceInfoDto.setStartTime(attendance.getStartTime()); //출근 시간 set
+                attendanceInfoDto.setWorkTime(attendanceService.calculationSetWorkTime(attendance.getStartTime(), endTime)); // 총 근무 시간 입력
+                attendanceInfoDto.setWeeklyAllowance(new BigDecimal(BigInteger.ZERO));
+                attendanceInfoDto.setBonus(new BigDecimal(BigInteger.ZERO));
                 attendanceInfoDto.setDailyWage(attendanceService.calculattionDailyWage(
                         attendanceService.calculationWorkTime(attendance.getStartTime(), endTime),
                         attendanceRepository.findHourWageByEmployeeId(employeeId)));

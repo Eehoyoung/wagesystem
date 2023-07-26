@@ -156,21 +156,6 @@ public class AttendanceServiceImpl implements AttendanceService {
 
     @Transactional
     @Override
-    public AttendanceInfoDto getAttendanceById(Long attendanceId) {
-        Optional<Attendance> attendanceOptional = attendanceRepository.findById(attendanceId);
-
-        if (attendanceOptional.isPresent()) {
-            Attendance attendance = attendanceOptional.get();
-
-            return new AttendanceInfoDto(attendance.getAttendanceId(), attendance.getEmployee().getEmployeeId()
-                    , attendance.getStartTime(), attendance.getEndTime(), attendance.getWorkTime(), attendance.getDailyWage(), attendance.getWorkDay(), attendance.getWeeklyAllowance(), attendance.getBonus());
-        } else {
-            throw new RuntimeException("Attendance not found");
-        }
-    }
-
-    @Transactional
-    @Override
     public List<AttendanceInfoDto> getAllAttendances() {
         List<Attendance> attendances = attendanceRepository.findAll();
         return attendances.stream().map(
@@ -197,12 +182,6 @@ public class AttendanceServiceImpl implements AttendanceService {
         attendance.setDailyWage(AttendanceInfoDto.getDailyWage());
 
         attendanceRepository.save(attendance);
-    }
-
-    @Transactional
-    @Override
-    public void deleteAttendance(Long attendanceId) {
-        attendanceRepository.deleteById(attendanceId);
     }
 
     @Transactional

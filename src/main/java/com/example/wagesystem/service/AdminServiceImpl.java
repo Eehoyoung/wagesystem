@@ -204,6 +204,7 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
+    @Transactional
     public Attendance insertOrUpdateStartTime(AttendanceMissDto attendanceMissDto, EmployeeInfoDto employeeInfoDto) {
         Attendance attendance = new Attendance();
 
@@ -220,12 +221,6 @@ public class AdminServiceImpl implements AdminService {
         attendance.setDailyWage(attendanceService.calculattionDailyWage(
                 attendanceService.calculationWorkTime(attendanceMissDto.getStartTime(), attendanceMissDto.getEndTime()),
                 attendanceRepository.findHourWageByEmployeeId(attendanceMissDto.getEmployeeId())));
-        saveRepository(employeeInfoDto, attendance);
-
-        return attendance;
-    }
-
-    private void saveRepository(EmployeeInfoDto employeeInfoDto, Attendance attendance) {
         attendanceRepository.save(attendance);
         BigDecimal monthWage = attendanceService.calculateMonthWage(attendance.getEmployee().getEmployeeId());
         employeeInfoDto.setMonthWage(monthWage);
@@ -234,6 +229,8 @@ public class AdminServiceImpl implements AdminService {
         } catch (ObjectNotFoundException e) {
             throw new RuntimeException(e);
         }
+
+        return attendance;
     }
 
     @Override
@@ -248,11 +245,10 @@ public class AdminServiceImpl implements AdminService {
         Attendance findAttendance = attendanceRepository.findById(attendanceId).orElseThrow(
                 () -> new IllegalArgumentException("해당 근무기록이 없습니다.")
         );
-
+        Employee employee = attendanceRepository.findEmployeeByAttendanceId(attendanceId);
         attendanceEdit.setAttendanceId(findAttendance.getAttendanceId());
-        attendanceEdit.setEmployee(findAttendance.getEmployee());
+        attendanceEdit.setEmployee(employee);
         attendanceEdit.setBonus(findAttendance.getBonus());
-        attendanceEdit.setDailyWage(findAttendance.getDailyWage());
         attendanceEdit.setStartTime(findAttendance.getStartTime());
         attendanceEdit.setEndTime(findAttendance.getEndTime());
         attendanceEdit.setWeeklyAllowance(findAttendance.getWeeklyAllowance());
@@ -266,9 +262,10 @@ public class AdminServiceImpl implements AdminService {
         Attendance findAttendance = attendanceRepository.findById(attendanceId).orElseThrow(
                 () -> new IllegalArgumentException("해당 근무기록이 없습니다.")
         );
-        findAttendance.setAttendanceId(attendanceId);
+        Employee employee = attendanceRepository.findEmployeeByAttendanceId(attendanceId);
+        findAttendance.setAttendanceId(attendanceEdit.getAttendanceId());
         findAttendance.setBonus(attendanceEdit.getBonus());
-        findAttendance.setEmployee(attendanceEdit.getEmployee());
+        findAttendance.setEmployee(employee);
         findAttendance.setStartTime(attendanceEdit.getStartTime());
         findAttendance.setEndTime(attendanceEdit.getEndTime());
         findAttendance.setWeeklyAllowance(attendanceEdit.getWeeklyAllowance());
@@ -276,8 +273,15 @@ public class AdminServiceImpl implements AdminService {
         findAttendance.setWorkTime(attendanceService.calculationSetWorkTime(attendanceEdit.getStartTime(), attendanceEdit.getEndTime()));
         findAttendance.setDailyWage(attendanceService.calculattionDailyWage(
                 attendanceService.calculationWorkTime(attendanceEdit.getStartTime(), attendanceEdit.getEndTime()),
-                attendanceRepository.findHourWageByEmployeeId(attendanceEdit.getEmployee().getEmployeeId())));
-        saveRepository(employeeInfoDto, findAttendance);
+                attendanceRepository.findHourWageByEmployeeId(employee.getEmployeeId())));
+        attendanceRepository.save(findAttendance);
+        BigDecimal monthWage = attendanceService.calculateMonthWage(findAttendance.getEmployee().getEmployeeId());
+        employeeInfoDto.setMonthWage(monthWage);
+        try {
+            employeeService.updateMonthWage(findAttendance.getEmployee().getEmployeeId(), employeeInfoDto);
+        } catch (ObjectNotFoundException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
@@ -317,7 +321,12 @@ public class AdminServiceImpl implements AdminService {
         for (Attendance attendance : attendances) {
             if (attendance.getWorkTime() != null) {
                 AttendanceInfoDto attendanceInfoDto = new AttendanceInfoDto();
-                createAttendanceInfo(endTime, attendance, attendanceInfoDto, attendanceService);
+                attendanceInfoDto.setAttendanceId(attendance.getAttendanceId());
+                attendanceInfoDto.setEndTime(endTime); // 퇴근 시간 입력
+                attendanceInfoDto.setStartTime(attendance.getStartTime()); //출근 시간 set
+                attendanceInfoDto.setWorkTime(attendanceService.calculationSetWorkTime(attendance.getStartTime(), endTime)); // 총 근무 시간 입력
+                attendanceInfoDto.setWeeklyAllowance(new BigDecimal(BigInteger.ZERO));
+                attendanceInfoDto.setBonus(new BigDecimal(BigInteger.ZERO));
                 attendanceInfoDto.setDailyWage(attendanceService.calculattionDailyWage(
                         attendanceService.calculationWorkTime(attendance.getStartTime(), endTime),
                         attendanceRepository.findHourWageByEmployeeId(attendance.getEmployee().getEmployeeId())));
@@ -334,14 +343,5 @@ public class AdminServiceImpl implements AdminService {
                 }
             }
         }
-    }
-
-    public static void createAttendanceInfo(LocalDateTime endTime, Attendance attendance, AttendanceInfoDto attendanceInfoDto, AttendanceServiceImpl attendanceService) {
-        attendanceInfoDto.setAttendanceId(attendance.getAttendanceId());
-        attendanceInfoDto.setEndTime(endTime); // 퇴근 시간 입력
-        attendanceInfoDto.setStartTime(attendance.getStartTime()); //출근 시간 set
-        attendanceInfoDto.setWorkTime(attendanceService.calculationSetWorkTime(attendance.getStartTime(), endTime)); // 총 근무 시간 입력
-        attendanceInfoDto.setWeeklyAllowance(new BigDecimal(BigInteger.ZERO));
-        attendanceInfoDto.setBonus(new BigDecimal(BigInteger.ZERO));
     }
 }

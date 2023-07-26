@@ -133,7 +133,7 @@ public class AdminController {
 
     @DeleteMapping("/admin/delete-attendance/{attendance_id}")
     @ResponseBody
-    public String deleteAttendance(@PathVariable("attendance_id") Long attendanceId){
+    public String deleteAttendance(@PathVariable("attendance_id") Long attendanceId) {
         adminService.deleteAttendance(attendanceId);
         System.out.println(attendanceId);
         return "근무기록이 삭제 되었습니다.";
@@ -153,16 +153,14 @@ public class AdminController {
 
     @PostMapping("/admin/edit/{attendanceId}")
     public String updateAttendance(@ModelAttribute AttendanceEditDto attendanceDto,
-                                   @PathVariable Long attendanceId,
-                                   RedirectAttributes redirectAttributes,EmployeeInfoDto employeeInfoDto) {
+                                   @PathVariable("attendanceId") Long attendanceId,
+                                   RedirectAttributes redirectAttributes, EmployeeInfoDto employeeInfoDto) {
         try {
-            adminService.updateAttendanceData(attendanceDto,employeeInfoDto,attendanceId);
+            adminService.updateAttendanceData(attendanceDto, employeeInfoDto, attendanceId);
             redirectAttributes.addFlashAttribute("successMessage", "근무기록이 성공적으로 업데이트되었습니다.");
         } catch (RuntimeException e) {
             redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
         }
         return "redirect:/main/index";
     }
-
 }
-

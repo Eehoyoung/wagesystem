@@ -79,16 +79,6 @@ public class EmployeeServiceImpl implements EmployeeService, UserDetailsService 
     }
 
     @Override
-    @Transactional
-    public void updateEmployeeId(Long employeeId, Long newEmployeeId) {
-        Employee employee = employeeRepository.findById(employeeId).orElse(null);
-        if (employee != null) {
-            employee.setEmployeeId(newEmployeeId);
-            employeeRepository.save(employee);
-        }
-    }
-
-    @Override
     public Employee findEmployeeById(Long id) {
         return employeeRepository.findById(id).orElseThrow(() -> new LoginIdNotFoundException("해당하는 사원이 존재하지 않습니다."));
     }
@@ -146,14 +136,6 @@ public class EmployeeServiceImpl implements EmployeeService, UserDetailsService 
 
     }
 
-    @Transactional
-    @Override
-    public Long changePw(Long id, String password) {
-        Employee employee = findEmployeeById(id);
-        employee.setLoginPw(password);
-        return employee.getEmployeeId();
-    }
-
     @Override
     public MyPageDto showSimpleInfo(String loginId) {
         Employee findMember = employeeRepository.findByLoginId(loginId)
@@ -181,13 +163,6 @@ public class EmployeeServiceImpl implements EmployeeService, UserDetailsService 
         employeeRepository.deleteByLoginId(loginId);
     }
 
-    @Transactional
-    @Override
-    public Long deleteById(Long id) {
-        employeeRepository.deleteById(id);
-        return id;
-    }
-
     @Override
     public ProfileDto showProfileData(String loginId) {
         ProfileDto profileDto = new ProfileDto();
@@ -210,11 +185,6 @@ public class EmployeeServiceImpl implements EmployeeService, UserDetailsService 
         profileDto.setBirthday(birthdayArr);
 
         return profileDto;
-    }
-
-    @Override
-    public Page<Employee> findAllMemberByOrderByCreatedAt(Pageable pageable) {
-        return employeeRepository.findAllByOrderByHireDate(pageable);
     }
 
     @Transactional

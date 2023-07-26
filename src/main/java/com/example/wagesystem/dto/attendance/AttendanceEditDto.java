@@ -25,8 +25,6 @@ public class AttendanceEditDto {
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
     private LocalDateTime endTime;
 
-    private BigDecimal dailyWage;
-
     private BigDecimal weeklyAllowance;
 
     private BigDecimal bonus;

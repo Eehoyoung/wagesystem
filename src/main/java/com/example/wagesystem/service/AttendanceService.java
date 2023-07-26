@@ -32,13 +32,9 @@ public interface AttendanceService {
 
     Long createAttendance(AttendanceInfoDto attendanceInfoDto);
 
-    AttendanceInfoDto getAttendanceById(Long attendanceId);
-
     List<AttendanceInfoDto> getAllAttendances();
 
     void updateAttendance(Long attendanceId, AttendanceInfoDto attendanceInfoDto);
-
-    void deleteAttendance(Long attendanceId);
 
     Optional<Attendance> getLatestAttendanceByEmployeeId(Long employeeId);
 

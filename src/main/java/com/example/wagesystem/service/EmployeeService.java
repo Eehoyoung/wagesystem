@@ -17,8 +17,6 @@ public interface EmployeeService {
 
     Long tempEmployeeResignation(ResignationDto resignationDto);
 
-    void updateEmployeeId(Long employeeId, Long newEmployeeId);
-
     Employee findEmployeeById(Long id);
 
     Employee findEmployeeLoginID(String loginId);
@@ -27,18 +25,13 @@ public interface EmployeeService {
 
     void updateProfile(String loginId, ProfileDto profileDto);
 
-    Long changePw(Long id, String password);
-
     MyPageDto showSimpleInfo(String loginId);
 
     boolean doubleCheckId(String registerId);
 
     void deleteEmployeeByLoginId(String loginId);
 
-    Long deleteById(Long id);
-
     ProfileDto showProfileData(String loginId);
 
-    Page<Employee> findAllMemberByOrderByCreatedAt(Pageable pageable);
 
 }

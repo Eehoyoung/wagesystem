@@ -43,5 +43,8 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Long>, Q
     @Query("SELECT a FROM Attendance a WHERE a.endTime IS NULL")
     List<Attendance> findAttendanceWithoutEndTime();
 
+    @Query("SELECT a.employee FROM Attendance a WHERE a.attendanceId = :attendanceId")
+    Employee findEmployeeByAttendanceId(@Param("attendanceId") Long attendanceId);
+
 }
 
