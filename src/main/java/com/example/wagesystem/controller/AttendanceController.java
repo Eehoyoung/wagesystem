@@ -8,6 +8,7 @@ import com.example.wagesystem.dto.employee.EmployeeInfoDto;
 import com.example.wagesystem.exception.AttendanceException;
 import com.example.wagesystem.repository.AttendanceRepository;
 import com.example.wagesystem.repository.EmployeeRepository;
+import com.example.wagesystem.service.AdminServiceImpl;
 import com.example.wagesystem.service.AttendanceServiceImpl;
 import com.example.wagesystem.service.EmployeeServiceImpl;
 import io.swagger.annotations.ApiOperation;
@@ -113,13 +114,7 @@ public class AttendanceController {
             if (attendance.getEndTime() == null) {
                 LocalDateTime endTime = LocalDateTime.now();
 
-                attendanceInfoDto.setAttendanceId(attendance.getAttendanceId());
-
-                attendanceInfoDto.setEndTime(endTime); // 퇴근 시간 입력
-                attendanceInfoDto.setStartTime(attendance.getStartTime()); //출근 시간 set
-                attendanceInfoDto.setWorkTime(attendanceService.calculationSetWorkTime(attendance.getStartTime(), endTime)); // 총 근무 시간 입력
-                attendanceInfoDto.setWeeklyAllowance(new BigDecimal(BigInteger.ZERO));
-                attendanceInfoDto.setBonus(new BigDecimal(BigInteger.ZERO));
+                AdminServiceImpl.createAttendanceInfo(endTime, attendance, attendanceInfoDto, attendanceService);
                 attendanceInfoDto.setDailyWage(attendanceService.calculattionDailyWage(
                         attendanceService.calculationWorkTime(attendance.getStartTime(), endTime),
                         attendanceRepository.findHourWageByEmployeeId(employeeId)));

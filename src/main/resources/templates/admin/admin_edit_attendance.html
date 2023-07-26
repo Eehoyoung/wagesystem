@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>근무기록 수정 - 관리자</title>
+</head>
+<body>
+<h1>근무기록 수정</h1>
+<form th:action="@{/admin/edit/{attendanceId}(attendanceId=${attendanceDto.attendanceId})}" th:object="${attendanceDto}" method="post">
+  <label for="startTime">시작 시간:</label>
+  <input type="datetime-local" id="startTime" th:field="*{startTime}"/><br/>
+
+  <label for="endTime">종료 시간:</label>
+  <input type="datetime-local" id="endTime" th:field="*{endTime}"/><br/>
+
+  <label for="bonus">보너스:</label>
+  <input type="number" id="bonus" th:field="*{bonus}" step="0.01"/><br/>
+
+  <label for="weeklyAllowance">주간 수당:</label>
+  <input type="number" id="weeklyAllowance" th:field="*{weeklyAllowance}" step="1.00"/><br/>
+
+  <button type="submit">수정</button>
+</form>
+<a th:href="@{/attendance}">근무기록 목록으로 돌아가기</a>
+</body>
+</html>

@@ -5,6 +5,7 @@ import com.example.wagesystem.domain.Employee;
 import com.example.wagesystem.domain.SearchEmployee;
 import com.example.wagesystem.domain.SearchResignation;
 import com.example.wagesystem.dto.attendance.AttendanceDto;
+import com.example.wagesystem.dto.attendance.AttendanceEditDto;
 import com.example.wagesystem.dto.attendance.AttendanceMissDto;
 import com.example.wagesystem.dto.employee.DailyWageDto;
 import com.example.wagesystem.dto.employee.EmployeeInfoDto;
@@ -48,4 +49,9 @@ public interface AdminService {
     Attendance insertOrUpdateStartTime(AttendanceMissDto attendanceMissDto, EmployeeInfoDto employeeInfoDto);
 
     void deleteAttendance(Long attendanceId);
+
+    AttendanceEditDto showAttendanceData(Long attendanceId);
+
+    void updateAttendanceData(AttendanceEditDto attendanceEdit, EmployeeInfoDto employeeInfoDto, Long attendanceId);
+    List<Attendance> findAllAttendance();
 }

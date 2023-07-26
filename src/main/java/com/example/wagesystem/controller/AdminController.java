@@ -5,6 +5,7 @@ import com.example.wagesystem.domain.Employee;
 import com.example.wagesystem.domain.SearchEmployee;
 import com.example.wagesystem.domain.SearchResignation;
 import com.example.wagesystem.dto.attendance.AttendanceDto;
+import com.example.wagesystem.dto.attendance.AttendanceEditDto;
 import com.example.wagesystem.dto.attendance.AttendanceMissDto;
 import com.example.wagesystem.dto.employee.*;
 import com.example.wagesystem.dto.resignation.ResignationEmpDto;
@@ -16,6 +17,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -140,6 +142,26 @@ public class AdminController {
     @GetMapping("/admin/delete-attendance")
     public String deleteAttendance() {
         return "admin/admin_delete_attendance";
+    }
+
+    @GetMapping("/admin/edit/{attendanceId}")
+    public String showEditAttendanceForm(@PathVariable Long attendanceId, Model model) {
+        AttendanceEditDto attendanceDto = adminService.showAttendanceData(attendanceId);
+        model.addAttribute("attendanceDto", attendanceDto);
+        return "admin/admin_edit_attendance";
+    }
+
+    @PostMapping("/admin/edit/{attendanceId}")
+    public String updateAttendance(@ModelAttribute AttendanceEditDto attendanceDto,
+                                   @PathVariable Long attendanceId,
+                                   RedirectAttributes redirectAttributes,EmployeeInfoDto employeeInfoDto) {
+        try {
+            adminService.updateAttendanceData(attendanceDto,employeeInfoDto,attendanceId);
+            redirectAttributes.addFlashAttribute("successMessage", "근무기록이 성공적으로 업데이트되었습니다.");
+        } catch (RuntimeException e) {
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+        }
+        return "redirect:/main/index";
     }
 
 }

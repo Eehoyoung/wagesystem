@@ -5,6 +5,7 @@ import com.example.wagesystem.domain.Employee;
 import com.example.wagesystem.domain.SearchEmployee;
 import com.example.wagesystem.domain.SearchResignation;
 import com.example.wagesystem.dto.attendance.AttendanceDto;
+import com.example.wagesystem.dto.attendance.AttendanceEditDto;
 import com.example.wagesystem.dto.attendance.AttendanceInfoDto;
 import com.example.wagesystem.dto.attendance.AttendanceMissDto;
 import com.example.wagesystem.dto.employee.DailyWageDto;
@@ -219,6 +220,12 @@ public class AdminServiceImpl implements AdminService {
         attendance.setDailyWage(attendanceService.calculattionDailyWage(
                 attendanceService.calculationWorkTime(attendanceMissDto.getStartTime(), attendanceMissDto.getEndTime()),
                 attendanceRepository.findHourWageByEmployeeId(attendanceMissDto.getEmployeeId())));
+        saveRepository(employeeInfoDto, attendance);
+
+        return attendance;
+    }
+
+    private void saveRepository(EmployeeInfoDto employeeInfoDto, Attendance attendance) {
         attendanceRepository.save(attendance);
         BigDecimal monthWage = attendanceService.calculateMonthWage(attendance.getEmployee().getEmployeeId());
         employeeInfoDto.setMonthWage(monthWage);
@@ -227,14 +234,55 @@ public class AdminServiceImpl implements AdminService {
         } catch (ObjectNotFoundException e) {
             throw new RuntimeException(e);
         }
-
-        return attendance;
     }
 
     @Override
     @Transactional
     public void deleteAttendance(Long attendanceId) {
         attendanceRepository.deleteById(attendanceId);
+    }
+
+    @Override
+    public AttendanceEditDto showAttendanceData(Long attendanceId) {
+        AttendanceEditDto attendanceEdit = new AttendanceEditDto();
+        Attendance findAttendance = attendanceRepository.findById(attendanceId).orElseThrow(
+                () -> new IllegalArgumentException("해당 근무기록이 없습니다.")
+        );
+
+        attendanceEdit.setAttendanceId(findAttendance.getAttendanceId());
+        attendanceEdit.setEmployee(findAttendance.getEmployee());
+        attendanceEdit.setBonus(findAttendance.getBonus());
+        attendanceEdit.setDailyWage(findAttendance.getDailyWage());
+        attendanceEdit.setStartTime(findAttendance.getStartTime());
+        attendanceEdit.setEndTime(findAttendance.getEndTime());
+        attendanceEdit.setWeeklyAllowance(findAttendance.getWeeklyAllowance());
+
+        return attendanceEdit;
+    }
+
+    @Override
+    @Transactional
+    public void updateAttendanceData(AttendanceEditDto attendanceEdit, EmployeeInfoDto employeeInfoDto, Long attendanceId) {
+        Attendance findAttendance = attendanceRepository.findById(attendanceId).orElseThrow(
+                () -> new IllegalArgumentException("해당 근무기록이 없습니다.")
+        );
+        findAttendance.setAttendanceId(attendanceId);
+        findAttendance.setBonus(attendanceEdit.getBonus());
+        findAttendance.setEmployee(attendanceEdit.getEmployee());
+        findAttendance.setStartTime(attendanceEdit.getStartTime());
+        findAttendance.setEndTime(attendanceEdit.getEndTime());
+        findAttendance.setWeeklyAllowance(attendanceEdit.getWeeklyAllowance());
+        findAttendance.setWorkDay(attendanceEdit.getEndTime().toLocalDate());
+        findAttendance.setWorkTime(attendanceService.calculationSetWorkTime(attendanceEdit.getStartTime(), attendanceEdit.getEndTime()));
+        findAttendance.setDailyWage(attendanceService.calculattionDailyWage(
+                attendanceService.calculationWorkTime(attendanceEdit.getStartTime(), attendanceEdit.getEndTime()),
+                attendanceRepository.findHourWageByEmployeeId(attendanceEdit.getEmployee().getEmployeeId())));
+        saveRepository(employeeInfoDto, findAttendance);
+    }
+
+    @Override
+    public List<Attendance> findAllAttendance() {
+        return attendanceRepository.findAll();
     }
 
     @Transactional
@@ -269,12 +317,7 @@ public class AdminServiceImpl implements AdminService {
         for (Attendance attendance : attendances) {
             if (attendance.getWorkTime() != null) {
                 AttendanceInfoDto attendanceInfoDto = new AttendanceInfoDto();
-                attendanceInfoDto.setAttendanceId(attendance.getAttendanceId());
-                attendanceInfoDto.setEndTime(endTime); // 퇴근 시간 입력
-                attendanceInfoDto.setStartTime(attendance.getStartTime()); //출근 시간 set
-                attendanceInfoDto.setWorkTime(attendanceService.calculationSetWorkTime(attendance.getStartTime(), endTime)); // 총 근무 시간 입력
-                attendanceInfoDto.setWeeklyAllowance(new BigDecimal(BigInteger.ZERO));
-                attendanceInfoDto.setBonus(new BigDecimal(BigInteger.ZERO));
+                createAttendanceInfo(endTime, attendance, attendanceInfoDto, attendanceService);
                 attendanceInfoDto.setDailyWage(attendanceService.calculattionDailyWage(
                         attendanceService.calculationWorkTime(attendance.getStartTime(), endTime),
                         attendanceRepository.findHourWageByEmployeeId(attendance.getEmployee().getEmployeeId())));
@@ -291,5 +334,14 @@ public class AdminServiceImpl implements AdminService {
                 }
             }
         }
+    }
+
+    public static void createAttendanceInfo(LocalDateTime endTime, Attendance attendance, AttendanceInfoDto attendanceInfoDto, AttendanceServiceImpl attendanceService) {
+        attendanceInfoDto.setAttendanceId(attendance.getAttendanceId());
+        attendanceInfoDto.setEndTime(endTime); // 퇴근 시간 입력
+        attendanceInfoDto.setStartTime(attendance.getStartTime()); //출근 시간 set
+        attendanceInfoDto.setWorkTime(attendanceService.calculationSetWorkTime(attendance.getStartTime(), endTime)); // 총 근무 시간 입력
+        attendanceInfoDto.setWeeklyAllowance(new BigDecimal(BigInteger.ZERO));
+        attendanceInfoDto.setBonus(new BigDecimal(BigInteger.ZERO));
     }
 }

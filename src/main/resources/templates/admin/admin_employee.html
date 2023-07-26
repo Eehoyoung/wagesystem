@@ -117,6 +117,7 @@
                                 <th>일 급여</th>
                                 <th>주휴수당</th>
                                 <th>보너스</th>
+                                <th>수정</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -135,6 +136,9 @@
                                     10,000원
                                 </td>
                                 <td th:text="${#numbers.formatDecimal(att.bonus, 0, 'COMMA', 0, 'POINT')}">1,000원</td>
+                                <td><input th:onclick="|openEditAttendance('${att.attendanceId}')|"
+                                           type="button"
+                                           value="수정"></td>
                             </tr>
                             </tbody>
                             </tbody>
@@ -152,6 +156,13 @@
         </div>
     </div>
 </div>
+
+<script>
+    function openEditAttendance(id) {
+        location.href = '/admin/edit/' + id;
+    }
+
+</script>
 <script src="/js/admin/admin_nav.js"></script>
 </body>
 </html>
